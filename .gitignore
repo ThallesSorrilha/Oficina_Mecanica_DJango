@@ -1,5 +1,11 @@
-campeonato/
 __pycache__
 .env
 venv/
 db.sqlite3
+mecanica/migrations
+mecanica/templates
+mecanica/admin.py
+mecanica/apps.py
+mecanica/tests.py
+mecanica/urls.py
+mecanica/views.py
