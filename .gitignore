@@ -3,5 +3,4 @@ __pycache__
 venv/
 db.sqlite3
 mecanica/migrations
-mecanica/urls.py
 tarefas.txt
