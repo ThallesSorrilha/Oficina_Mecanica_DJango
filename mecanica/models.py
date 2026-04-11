@@ -10,6 +10,9 @@ class Cliente(models.Model):
 
     def __str__(self):
         return f"{self.nome} - {self.data_nascimento} - {self.cpf}"
+    
+    class Meta:
+        ordering = ['nome']
 
 
 class Carro(models.Model):
@@ -23,6 +26,9 @@ class Carro(models.Model):
 
     def __str__(self):
         return f"{self.modelo} - {self.cor} - {self.placa}"
+    
+    class Meta:
+        ordering = ['modelo']
 
 
 class Servico(models.Model):
@@ -32,6 +38,9 @@ class Servico(models.Model):
 
     def __str__(self):
         return f"{self.nome}"
+    
+    class Meta:
+        ordering = ['nome']
 
 
 class Peca(models.Model):
@@ -44,6 +53,9 @@ class Peca(models.Model):
 
     def __str__(self):
         return f"{self.nome} - {self.fabricante} - {self.codigo}"
+    
+    class Meta:
+        ordering = ['nome']
 
 
 class Funcionario(models.Model):
@@ -57,6 +69,9 @@ class Funcionario(models.Model):
 
     def __str__(self):
         return f"{self.nome} - {self.cargo} - {self.data_nascimento}"
+    
+    class Meta:
+        ordering = ['nomes']
 
 
 class Mecanico(Funcionario):
@@ -64,6 +79,9 @@ class Mecanico(Funcionario):
 
     def __str__(self):
         return f"{self.nome} - {self.especialidade}"
+    
+    class Meta:
+        ordering = ['especialidade']
 
 
 class ConsultorTecnico(Funcionario):
@@ -87,9 +105,13 @@ class OrdemServico(models.Model):
 
     def __str__(self):
         return f"{self.carro.modelo} - {self.carro.cor} - {self.estado} - {self.data_inicio}"
+    
+    class Meta:
+        verbose_name_plural = "OrdensServico"
+        ordering = ['-data_inicio']
 
 
-class ItensPeca(models.Model):
+class OrdemPecas(models.Model):
     peca = models.ForeignKey(Peca, on_delete=models.PROTECT)
     ordem_servico = models.ForeignKey(OrdemServico, on_delete=models.PROTECT)
     quantidade = models.PositiveIntegerField()
@@ -97,3 +119,7 @@ class ItensPeca(models.Model):
 
     def __str__(self):
         return f"({self.peca.nome} - {self.ordem_servico.carro.vin} - {self.quantidade})"
+    
+    class Meta:
+        verbose_name_plural = "OrdensPecas"
+        ordering = ['ordem_servico']
