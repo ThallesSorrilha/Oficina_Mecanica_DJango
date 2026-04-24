@@ -27,7 +27,8 @@
       rel="stylesheet"
     />
 
-    <link rel="stylesheet" href="{% static 'css/estilo.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/estilo.css' %}">
+
   </head>
   <body>
     <!-- ═══════════════════════════════════════════════════════════════
@@ -416,7 +417,7 @@
         <!-- ── Tabela de Ordens + Paleta ─────────────────────────── -->
         <div class="row g-4">
           <!-- Tabela recentes -->
-          <div class="col-lg-12">
+          <div class="col-lg-8">
             <div class="card">
               <div
                 class="card-header d-flex justify-content-between align-items-center py-3"
@@ -530,7 +531,146 @@
             </div>
           </div>
 
-          <!-- paleta foi apagada -->
+          <!-- Paleta / Elementos -->
+          <div class="col-lg-4">
+            <div class="card h-100">
+              <div class="card-header py-3">
+                <i class="bi bi-palette me-2 text-primary"></i>Paleta de
+                Componentes
+              </div>
+              <div class="card-body d-flex flex-column gap-3">
+                <!-- Botões -->
+                <div>
+                  <small
+                    class="text-muted d-block mb-2 fw-semibold text-uppercase"
+                    style="font-size: 0.7rem; letter-spacing: 0.05em"
+                    >Botões</small
+                  >
+                  <div class="d-flex flex-wrap gap-1">
+                    <button class="btn btn-primary btn-sm">Primary</button>
+                    <button class="btn btn-success btn-sm">Success</button>
+                    <button class="btn btn-info btn-sm">Info</button>
+                    <button class="btn btn-warning btn-sm">Warning</button>
+                    <button class="btn btn-danger btn-sm">Danger</button>
+                    <button class="btn btn-secondary btn-sm">Secondary</button>
+                  </div>
+                </div>
+
+                <!-- Outline -->
+                <div>
+                  <small
+                    class="text-muted d-block mb-2 fw-semibold text-uppercase"
+                    style="font-size: 0.7rem; letter-spacing: 0.05em"
+                    >Outline</small
+                  >
+                  <div class="d-flex flex-wrap gap-1">
+                    <button class="btn btn-outline-primary btn-sm">
+                      Primary
+                    </button>
+                    <button class="btn btn-outline-success btn-sm">
+                      Success
+                    </button>
+                    <button class="btn btn-outline-info btn-sm">Info</button>
+                    <button class="btn btn-outline-warning btn-sm">
+                      Warning
+                    </button>
+                    <button class="btn btn-outline-danger btn-sm">
+                      Danger
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Alertas -->
+                <div>
+                  <small
+                    class="text-muted d-block mb-2 fw-semibold text-uppercase"
+                    style="font-size: 0.7rem; letter-spacing: 0.05em"
+                    >Alertas</small
+                  >
+                  <div class="d-flex flex-column gap-1">
+                    <div class="alert alert-primary py-2 mb-0 small">
+                      Alerta <strong>Primary</strong>
+                    </div>
+                    <div class="alert alert-success py-2 mb-0 small">
+                      Alerta <strong>Success</strong>
+                    </div>
+                    <div class="alert alert-info py-2 mb-0 small">
+                      Alerta <strong>Info</strong>
+                    </div>
+                    <div class="alert alert-warning py-2 mb-0 small">
+                      Alerta <strong>Warning</strong>
+                    </div>
+                    <div class="alert alert-danger py-2 mb-0 small">
+                      Alerta <strong>Danger</strong>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Badges -->
+                <div>
+                  <small
+                    class="text-muted d-block mb-2 fw-semibold text-uppercase"
+                    style="font-size: 0.7rem; letter-spacing: 0.05em"
+                    >Badges</small
+                  >
+                  <div class="d-flex flex-wrap gap-1">
+                    <span class="badge bg-primary">Primary</span>
+                    <span class="badge bg-success">Success</span>
+                    <span class="badge bg-info">Info</span>
+                    <span class="badge bg-warning">Warning</span>
+                    <span class="badge bg-danger">Danger</span>
+                    <span class="badge bg-secondary">Secondary</span>
+                  </div>
+                </div>
+
+                <!-- Swatches de cor -->
+                <div>
+                  <small
+                    class="text-muted d-block mb-2 fw-semibold text-uppercase"
+                    style="font-size: 0.7rem; letter-spacing: 0.05em"
+                    >Cores Base</small
+                  >
+                  <div class="d-flex gap-1">
+                    <div
+                      class="rounded-2 flex-fill"
+                      style="height: 28px; background: #16a085"
+                      title="Green Sea"
+                    ></div>
+                    <div
+                      class="rounded-2 flex-fill"
+                      style="height: 28px; background: #1abc9c"
+                      title="Turquoise"
+                    ></div>
+                    <div
+                      class="rounded-2 flex-fill"
+                      style="height: 28px; background: #27ae60"
+                      title="Success"
+                    ></div>
+                    <div
+                      class="rounded-2 flex-fill"
+                      style="height: 28px; background: #2980b9"
+                      title="Info"
+                    ></div>
+                    <div
+                      class="rounded-2 flex-fill"
+                      style="height: 28px; background: #e67e22"
+                      title="Warning"
+                    ></div>
+                    <div
+                      class="rounded-2 flex-fill"
+                      style="height: 28px; background: #c0392b"
+                      title="Danger"
+                    ></div>
+                    <div
+                      class="rounded-2 flex-fill"
+                      style="height: 28px; background: #0d2b26"
+                      title="Dark"
+                    ></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <!-- /container -->
@@ -591,7 +731,7 @@
       <div class="modal-dialog modal-dialog-centered">
         <div
           class="modal-content border-0 shadow-lg"
-          style="background: #25544d; border-radius: 1rem !important"
+          style="background: #0d2b26; border-radius: 1rem !important"
         >
           <div class="modal-body p-4">
             <h5
