@@ -1,16 +1,158 @@
-{% extends "website/modelo.html" %}
-
-{% load static %}
-
-{% block hero %}
-
-{% endblock hero %}
-
-{% block conteudo %}
-<section class="py-5 py-lg-6 bg-surface">
+{% extends "website/modelo.html" %} {% load static %} {% block hero %}
+<section class="hero py-5 py-lg-6">
+  <div class="hero-grid-lines"></div>
+  <div class="container py-4 py-lg-5 position-relative">
+    <div class="row align-items-center g-4">
+      <div class="col-lg-8">
+        <span class="pill-tag reveal-up"
+          ><i class="bi bi-headset"></i> ATENDIMENTO TECNICO</span
+        >
+        <h1 class="display-5 mt-3 mb-3 reveal-up reveal-delay-1">
+          Vamos desenhar o fluxo ideal para sua oficina.
+        </h1>
+        <p
+          class="text-white-50 mb-0 reveal-up reveal-delay-2"
+          style="max-width: 620px"
+        >
+          Preencha o formulario e nosso time retorna com orientacoes sobre
+          implantacao, organizacao de processos e proximos passos.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock hero %} {% block conteudo %}
+<section class="py-5 bg-surface-alt">
   <div class="container">
-    <h3>Dúvidas? Entre em contato</h3>
+    <div class="row g-4 align-items-stretch">
+      <div class="col-lg-7">
+        <div class="contact-shell p-4 p-lg-5 h-100">
+          <h2 class="fw-display h4 mb-2">Envie sua mensagem</h2>
+          <p class="text-soft mb-4">
+            Formulario visual para coleta inicial. Integracao de envio pode ser
+            adicionada na proxima etapa.
+          </p>
+
+          <form>
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label for="nome" class="form-label fw-semibold">Nome</label>
+                <input
+                  id="nome"
+                  type="text"
+                  class="form-control"
+                  placeholder="Seu nome completo"
+                />
+              </div>
+
+              <div class="col-md-6">
+                <label for="oficina" class="form-label fw-semibold"
+                  >Nome da oficina</label
+                >
+                <input
+                  id="oficina"
+                  type="text"
+                  class="form-control"
+                  placeholder="Oficina Exemplo"
+                />
+              </div>
+
+              <div class="col-md-6">
+                <label for="email" class="form-label fw-semibold">Email</label>
+                <input
+                  id="email"
+                  type="email"
+                  class="form-control"
+                  placeholder="voce@oficina.com"
+                />
+              </div>
+
+              <div class="col-md-6">
+                <label for="telefone" class="form-label fw-semibold"
+                  >Telefone</label
+                >
+                <input
+                  id="telefone"
+                  type="text"
+                  class="form-control"
+                  placeholder="(41) 99999-9999"
+                />
+              </div>
+
+              <div class="col-12">
+                <label for="assunto" class="form-label fw-semibold"
+                  >Assunto</label
+                >
+                <select id="assunto" class="form-select">
+                  <option selected>Selecione uma opcao</option>
+                  <option>Conhecer a plataforma</option>
+                  <option>Implantacao em oficina existente</option>
+                  <option>Suporte tecnico</option>
+                  <option>Parceria comercial</option>
+                </select>
+              </div>
+
+              <div class="col-12">
+                <label for="mensagem" class="form-label fw-semibold"
+                  >Mensagem</label
+                >
+                <textarea
+                  id="mensagem"
+                  class="form-control"
+                  rows="5"
+                  placeholder="Conte um pouco sobre sua rotina atual e o que deseja melhorar."
+                ></textarea>
+              </div>
+
+              <div class="col-12 d-flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  class="btn btn-primary px-4 fw-semibold rounded-3"
+                >
+                  <i class="bi bi-send me-1"></i>Enviar mensagem
+                </button>
+                <button
+                  type="reset"
+                  class="btn btn-outline-primary px-4 rounded-3"
+                >
+                  Limpar
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="col-lg-5">
+        <div class="d-flex flex-column gap-3 h-100">
+          <article class="card-garage">
+            <span class="icon-badge primary"
+              ><i class="bi bi-clock-history"></i
+            ></span>
+            <h5 class="fw-display mb-2">Horario de atendimento</h5>
+            <p class="text-soft mb-1">Segunda a sexta: 08h as 18h</p>
+            <p class="text-soft mb-0">Sabado: 08h as 12h</p>
+          </article>
+
+          <article class="card-garage">
+            <span class="icon-badge dark"><i class="bi bi-geo-alt"></i></span>
+            <h5 class="fw-display mb-2">Unidade principal</h5>
+            <p class="text-soft mb-0">
+              Rua Exemplo, 123 - Centro<br />Curitiba - PR
+            </p>
+          </article>
+
+          <article class="card-garage">
+            <span class="icon-badge success"
+              ><i class="bi bi-telephone-outbound"></i
+            ></span>
+            <h5 class="fw-display mb-2">Canais rapidos</h5>
+            <p class="text-soft mb-1">Telefone: (41) 0000-0000</p>
+            <p class="text-soft mb-0">Email: contato@oficinaprime.com.br</p>
+          </article>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 {% endblock conteudo %}
-

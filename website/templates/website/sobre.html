@@ -3,43 +3,26 @@
 {% load static %}
 
 {% block hero %}
-<!-- ── Hero: Sobre ── -->
 <section class="hero py-5 py-lg-6">
-  <div class="hero-noise"></div>
+  <div class="hero-grid-lines"></div>
   <div class="container py-4 py-lg-5 position-relative">
-    <div class="row align-items-center gy-4">
+    <div class="row align-items-center g-4">
       <div class="col-lg-8">
-        <span class="badge bg-petrol-subtle text-primary fw-semibold px-3 py-2 rounded-pill mb-3 d-inline-block" style="font-size:.75rem; letter-spacing:.05em;">
-          <i class="bi bi-controller me-1"></i> Competição & Comunidade
-        </span>
-        <h1 class="display-3 fw-display text-white mb-3">
-          Elevando o E-Sports<br>
-          <span style="color: var(--petrol-lighter);">no IFPR</span>
-        </h1>
-        <p class="mb-4" style="color: rgba(255,255,255,.8); font-size:1.05rem; max-width:580px; line-height:1.8">
-          Uma plataforma completa para gerenciar uma mecânica. Mantenha seus clientes, funcionários e serviços. Tudo em um só lugar.
+        <span class="pill-tag reveal-up"><i class="bi bi-buildings"></i> NOSSA HISTORIA</span>
+        <h1 class="display-5 mt-3 mb-3 reveal-up reveal-delay-1">Tecnologia aplicada ao chao de oficina.</h1>
+        <p class="text-white-50 mb-4 reveal-up reveal-delay-2" style="max-width: 650px;">
+          A Oficina Prime nasceu para transformar o controle operacional da mecanica automotiva,
+          conectando atendimento, execucao tecnica e acompanhamento de resultados.
         </p>
-        <div class="d-flex flex-wrap gap-3">
-          <a href="{% url "index" %}" class="btn btn-light fw-semibold px-4 rounded-2">
-            <i class="bi bi-arrow-right me-1"></i>Explorar Campeonatos
-          </a>
-          <a href="{% url "contato" %}" class="btn btn-auth px-4 rounded-2">
-            <i class="bi bi-envelope me-1"></i>Entrar em Contato
-          </a>
-        </div>
       </div>
-      <div class="col-lg-4 d-none d-lg-flex justify-content-end">
-        <!-- Decorative card mockup -->
-        <div class="p-4 rounded-2xl" style="background:rgba(45,158,107,.15); backdrop-filter:blur(12px); border:2px solid rgba(45,158,107,.3); width:280px;">
-          <div class="text-center">
-            <div style="font-size:3rem; margin-bottom:1rem">⚙️</div>
-            <p style="color:rgba(255,255,255,.9); font-weight:600; margin-bottom:.5rem">Gerenciar Funcionários</p>
-            <p style="color:rgba(255,255,255,.6); font-size:.85rem; margin-bottom:1rem">Mantenha seus dados com segurança</p>
-            <div class="d-flex gap-2 justify-content-center">
-              <span class="badge bg-success rounded-pill">Teams</span>
-              <span class="badge bg-info rounded-pill">Scores</span>
-            </div>
-          </div>
+      <div class="col-lg-4 d-none d-lg-block">
+        <div class="panel-glass reveal-up reveal-delay-2">
+          <h6 class="text-uppercase mb-3" style="letter-spacing: .08em; font-size: .75rem; color: rgba(255,255,255,.72);">Compromissos</h6>
+          <ul class="list-unstyled mb-0 d-flex flex-column gap-2 text-white-50">
+            <li><i class="bi bi-check2-circle me-2"></i>Processos claros</li>
+            <li><i class="bi bi-check2-circle me-2"></i>Dados confiaveis</li>
+            <li><i class="bi bi-check2-circle me-2"></i>Evolucao continua</li>
+          </ul>
         </div>
       </div>
     </div>
@@ -48,49 +31,46 @@
 {% endblock hero %}
 
 {% block conteudo %}
-
-<!-- ── Missão e Visão ── -->
-<section class="py-5 py-lg-6 bg-surface">
+<section class="py-5 bg-surface-alt">
   <div class="container">
     <div class="row g-4 align-items-center">
       <div class="col-lg-6">
-        <h2 class="fw-display mb-3">Nossa Missão</h2>
-        <p class="text-secondary mb-4" style="font-size:1.05rem; line-height:1.8;">
-          Permitir que você gerencie a sua mecânica da forma mais simples e eficiente possível.
+        <h2 class="fw-display mb-3">Missao</h2>
+        <p class="text-soft mb-4">
+          Dar autonomia para oficinas de todos os portes organizarem atendimento, diagnostico,
+          execucao e pos-venda com mais rapidez e consistencia.
         </p>
+
         <div class="row g-3">
           <div class="col-sm-6">
-            <div class="d-flex gap-3">
-              <div class="feature-icon bg-primary bg-opacity-10">
-                <i class="bi bi-trophy text-primary fs-5"></i>
-              </div>
-              <div>
-                <h6 class="fw-semibold mb-1">Competições Justas</h6>
-                <p class="text-secondary mb-0" style="font-size:.9rem">Sistema equitativo para todos</p>
-              </div>
+            <div class="card-garage h-100">
+              <span class="icon-badge primary"><i class="bi bi-lightning-charge"></i></span>
+              <h6 class="mb-1">Agilidade operacional</h6>
+              <p class="text-soft mb-0">Menos retrabalho e mais tempo no que gera valor.</p>
             </div>
           </div>
           <div class="col-sm-6">
-            <div class="d-flex gap-3">
-              <div class="feature-icon bg-success bg-opacity-10">
-                <i class="bi bi-people-fill text-success fs-5"></i>
-              </div>
-              <div>
-                <h6 class="fw-semibold mb-1">Comunidade Ativa</h6>
-                <p class="text-secondary mb-0" style="font-size:.9rem">Conheça outros players</p>
-              </div>
+            <div class="card-garage h-100">
+              <span class="icon-badge dark"><i class="bi bi-shield-check"></i></span>
+              <h6 class="mb-1">Confianca nos dados</h6>
+              <p class="text-soft mb-0">Historico centralizado para decisoes tecnicas seguras.</p>
             </div>
           </div>
         </div>
       </div>
+
       <div class="col-lg-6">
-        <div class="card-petrol p-5 bg-gradient" style="background: linear-gradient(135deg, var(--petrol-subtle) 0%, #e8f1fb 100%);">
-          <div class="text-center">
-            <div style="font-size:4rem; margin-bottom:1.5rem">🚀</div>
-            <h3 class="fw-display mb-2" style="color:var(--petrol-dark)">Transformando Talentos</h3>
-            <p style="color:var(--text-muted); line-height:1.7">
-              Somos uma plataforma dedicada a reveladores e nurturadores de novos talentos em games dentro do Instituto Federal do Paraná.
-            </p>
+        <div class="card-garage p-4">
+          <h3 class="fw-display mb-3">Visao</h3>
+          <p class="text-soft mb-3">
+            Ser a plataforma referencia para gestao de oficinas independentes, ajudando equipes a
+            crescer com controle financeiro e qualidade de atendimento.
+          </p>
+          <div class="d-flex flex-wrap gap-2">
+            <span class="badge text-bg-light border" style="padding: .5rem .75rem;">Cliente no centro</span>
+            <span class="badge text-bg-light border" style="padding: .5rem .75rem;">Padronizacao</span>
+            <span class="badge text-bg-light border" style="padding: .5rem .75rem;">Escalabilidade</span>
+            <span class="badge text-bg-light border" style="padding: .5rem .75rem;">Transparencia</span>
           </div>
         </div>
       </div>
@@ -98,215 +78,48 @@
   </div>
 </section>
 
-<!-- ── Recursos Principais ── -->
-<section class="py-5 py-lg-6 bg-surface-alt">
+<section class="py-5 bg-surface">
   <div class="container">
-    <div class="text-center mb-5">
-      <h2 class="fw-display mb-3">O Que Você Pode Fazer</h2>
-      <p class="text-secondary" style="font-size:1.05rem; max-width:500px; margin:0 auto">
-        Tudo que você precisa para gerenciar e participar de campeonatos de e-sports
-      </p>
+    <div class="section-heading mb-4">
+      <h2 class="fw-display mb-2">Como evoluimos com as oficinas</h2>
+      <p class="text-soft mb-0">Uma abordagem pratica para quem vive a operacao no dia a dia.</p>
     </div>
-    
+
     <div class="row g-4">
-      <!-- Card 1 -->
-      <div class="col-md-6 col-lg-3">
-        <div class="card-petrol p-4 h-100 text-center">
-          <div class="feature-icon bg-primary bg-opacity-10 mx-auto mb-3">
-            <i class="bi bi-calendar-check fs-4 text-primary"></i>
-          </div>
-          <h5 class="fw-display mb-2">Criar Campeonatos</h5>
-          <p class="text-secondary mb-0" style="font-size:.9rem">
-            Organize torneios com diferentes modalidades e regras personalizadas
-          </p>
-        </div>
+      <div class="col-md-4">
+        <article class="card-garage h-100">
+          <small class="text-soft d-block mb-2">Etapa 01</small>
+          <h5 class="fw-display mb-2">Diagnostico da rotina</h5>
+          <p class="text-soft mb-0">Mapeamos gargalos de cadastro, atendimento e controle de ordens.</p>
+        </article>
       </div>
-
-      <!-- Card 2 -->
-      <div class="col-md-6 col-lg-3">
-        <div class="card-petrol p-4 h-100 text-center">
-          <div class="feature-icon bg-success bg-opacity-10 mx-auto mb-3">
-            <i class="bi bi-person-plus-fill fs-4 text-success"></i>
-          </div>
-          <h5 class="fw-display mb-2">Inscrever Jogadores</h5>
-          <p class="text-secondary mb-0" style="font-size:.9rem">
-            Registre seus companheiros e forme equipes para competir
-          </p>
-        </div>
+      <div class="col-md-4">
+        <article class="card-garage h-100">
+          <small class="text-soft d-block mb-2">Etapa 02</small>
+          <h5 class="fw-display mb-2">Padronizacao de processo</h5>
+          <p class="text-soft mb-0">Estruturamos um fluxo unico de trabalho para equipe tecnica e consultoria.</p>
+        </article>
       </div>
-
-      <!-- Card 3 -->
-      <div class="col-md-6 col-lg-3">
-        <div class="card-petrol p-4 h-100 text-center">
-          <div class="feature-icon bg-info bg-opacity-10 mx-auto mb-3">
-            <i class="bi bi-bar-chart-line fs-4 text-info"></i>
-          </div>
-          <h5 class="fw-display mb-2">Acompanhar Resultados</h5>
-          <p class="text-secondary mb-0" style="font-size:.9rem">
-            Visualize placar, rankings e desempenho em tempo real
-          </p>
-        </div>
-      </div>
-
-      <!-- Card 4 -->
-      <div class="col-md-6 col-lg-3">
-        <div class="card-petrol p-4 h-100 text-center">
-          <div class="feature-icon bg-warning bg-opacity-10 mx-auto mb-3">
-            <i class="bi bi-chat-dots-fill fs-4 text-warning"></i>
-          </div>
-          <h5 class="fw-display mb-2">Conectar Comunidade</h5>
-          <p class="text-secondary mb-0" style="font-size:.9rem">
-            Conheça gamers, forma alianças e cresça junto à comunidade
-          </p>
-        </div>
+      <div class="col-md-4">
+        <article class="card-garage h-100">
+          <small class="text-soft d-block mb-2">Etapa 03</small>
+          <h5 class="fw-display mb-2">Crescimento com previsao</h5>
+          <p class="text-soft mb-0">Dados operacionais e indicadores para planejar metas com seguranca.</p>
+        </article>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ── Como Funciona ── -->
-<section class="py-5 py-lg-6 bg-surface">
-  <div class="container">
-    <div class="text-center mb-5">
-      <h2 class="fw-display mb-3">Começar é Fácil</h2>
-    </div>
-    
-    <div class="row g-4 align-items-stretch">
-      <!-- Passo 1 -->
-      <div class="col-md-6 col-lg-3">
-        <div class="card-petrol p-4 h-100 border-start border-4 border-primary">
-          <div class="badge bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width:40px; height:40px; font-weight:700">1</div>
-          <h5 class="fw-display mb-2">Crie sua Conta</h5>
-          <p class="text-secondary mb-0" style="font-size:.9rem">
-            Registre-se rapidamente e acesse a plataforma
-          </p>
-        </div>
-      </div>
-
-      <!-- Passo 2 -->
-      <div class="col-md-6 col-lg-3">
-        <div class="card-petrol p-4 h-100 border-start border-4 border-success">
-          <div class="badge bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width:40px; height:40px; font-weight:700">2</div>
-          <h5 class="fw-display mb-2">Escolha um Torneio</h5>
-          <p class="text-secondary mb-0" style="font-size:.9rem">
-            Explore campeonatos abertos para participar
-          </p>
-        </div>
-      </div>
-
-      <!-- Passo 3 -->
-      <div class="col-md-6 col-lg-3">
-        <div class="card-petrol p-4 h-100 border-start border-4 border-info">
-          <div class="badge bg-info text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width:40px; height:40px; font-weight:700">3</div>
-          <h5 class="fw-display mb-2">Inscreva sua Equipe</h5>
-          <p class="text-secondary mb-0" style="font-size:.9rem">
-            Reúna seus companheiros e registre-se
-          </p>
-        </div>
-      </div>
-
-      <!-- Passo 4 -->
-      <div class="col-md-6 col-lg-3">
-        <div class="card-petrol p-4 h-100 border-start border-4 border-warning">
-          <div class="badge bg-warning text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width:40px; height:40px; font-weight:700">4</div>
-          <h5 class="fw-display mb-2">Compita e Vença</h5>
-          <p class="text-secondary mb-0" style="font-size:.9rem">
-            Inscreva sua mecânica
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ── Números & Impacto ── -->
-<section class="py-5 py-lg-6 bg-petrol">
-  <div class="container">
-    <div class="row text-center g-4">
-      <div class="col-sm-6 col-lg-3">
-        <div>
-          <h3 class="fw-display text-white mb-1" style="font-size:2.5rem">8+</h3>
-          <p style="color:rgba(255,255,255,.7); font-size:.95rem">Campeonatos Anuais</p>
-        </div>
-      </div>
-      <div class="col-sm-6 col-lg-3">
-        <div>
-          <h3 class="fw-display text-white mb-1" style="font-size:2.5rem">200+</h3>
-          <p style="color:rgba(255,255,255,.7); font-size:.95rem">Jogadores Inscritos</p>
-        </div>
-      </div>
-      <div class="col-sm-6 col-lg-3">
-        <div>
-          <h3 class="fw-display text-white mb-1" style="font-size:2.5rem">15+</h3>
-          <p style="color:rgba(255,255,255,.7); font-size:.95rem">Jogos Diferentes</p>
-        </div>
-      </div>
-      <div class="col-sm-6 col-lg-3">
-        <div>
-          <h3 class="fw-display text-white mb-1" style="font-size:2.5rem">∞</h3>
-          <p style="color:rgba(255,255,255,.7); font-size:.95rem">Possibilidades</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ── Sobre o IFPR ── -->
-<section class="py-5 py-lg-6 bg-surface-alt">
-  <div class="container">
-    <div class="row align-items-center g-5">
-      <div class="col-lg-6">
-        <h2 class="fw-display mb-3">Parte do IFPR</h2>
-        <p class="text-secondary mb-4" style="font-size:1.05rem; line-height:1.8;">
-          O Instituto Federal do Paraná é uma instituição de ensino públicadedicada à formação profissional e tecnológica. Esta plataforma de e-sports reforça nosso compromisso com inovação, inclusão e desenvolvimento de talentos.
-        </p>
-        <div class="d-flex flex-wrap gap-2">
-          <span class="badge bg-petrol-subtle text-primary border border-primary" style="font-size:.85rem; padding:.55rem 1rem">
-            <i class="bi bi-mortarboard me-1"></i>Educação
-          </span>
-          <span class="badge bg-petrol-subtle text-primary border border-primary" style="font-size:.85rem; padding:.55rem 1rem">
-            <i class="bi bi-lightning-charge me-1"></i>Inovação
-          </span>
-          <span class="badge bg-petrol-subtle text-primary border border-primary" style="font-size:.85rem; padding:.55rem 1rem">
-            <i class="bi bi-handshake me-1"></i>Comunidade
-          </span>
-          <span class="badge bg-petrol-subtle text-primary border border-primary" style="font-size:.85rem; padding:.55rem 1rem">
-            <i class="bi bi-star me-1"></i>Excelência
-          </span>
-        </div>
-      </div>
-      <div class="col-lg-6">
-        <div class="card-petrol p-5">
-          <blockquote class="mb-0" style="border-left:4px solid var(--cp-primary); padding-left:1.5rem;">
-            <p class="fw-semibold mb-3 text-primary" style="font-size:1.1rem">
-              "A tecnologia e o esporte eletrônico representam o futuro da educação profissional."
-            </p>
-            <footer class="text-secondary" style="font-size:.9rem">
-              — IFPR — Instituto Federal do Paraná
-            </footer>
-          </blockquote>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ── CTA Final ── -->
-<section class="py-5 py-lg-6 bg-petrol-darker">
-  <div class="container text-center">
-    <h2 class="fw-display text-white mb-3">Pronto para Jogar?</h2>
-    <p class="mb-4" style="color:rgba(255,255,255,.75); font-size:1.05rem; max-width:500px; margin:0 auto">
-      Inscreva-se agora e participe dos maiores campeonatos de e-sports do IFPR.
+<section class="py-5 bg-ink text-white">
+  <div class="container text-center py-2">
+    <h3 class="fw-display mb-2">Quer ver isso funcionando na sua realidade?</h3>
+    <p class="text-white-50 mb-4 mx-auto" style="max-width: 580px;">
+      Entre em contato e conheca uma proposta alinhada ao tamanho da sua oficina.
     </p>
-    <div class="d-flex justify-content-center gap-3 flex-wrap">
-      <a href="{% url "index" %}" class="btn btn-light fw-semibold px-5 rounded-2">
-        <i class="bi bi-play-fill me-1"></i>Explorar Agora
-      </a>
-      <a href="{% url "contato" %}" class="btn btn-auth px-5 rounded-2">
-        <i class="bi bi-question-circle me-1"></i>Dúvidas?
-      </a>
-    </div>
+    <a href="{% url "contato" %}" class="btn btn-primary px-4 fw-semibold rounded-3">
+      <i class="bi bi-chat-dots me-1"></i>Falar com o time
+    </a>
   </div>
 </section>
-
 {% endblock conteudo %}

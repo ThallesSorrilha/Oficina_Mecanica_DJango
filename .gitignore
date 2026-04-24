@@ -2,5 +2,4 @@ __pycache__
 .env
 venv/
 db.sqlite3
-mecanica/migrations
 tarefas.txt
