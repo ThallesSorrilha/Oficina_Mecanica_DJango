@@ -34,7 +34,7 @@ class Carro(models.Model):
 class Servico(models.Model):
     nome = models.CharField(max_length=60)
     descricao = models.CharField(max_length=200, null=True)
-    preco = models.DecimalField(decimal_places=2)
+    preco = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self):
         return f"{self.nome}"
@@ -48,7 +48,7 @@ class Peca(models.Model):
     fabricante = models.CharField(max_length=30)
     codigo = models.CharField(max_length=60)
     descricao = models.CharField(max_length=100, null=True)
-    preco = models.DecimalField(decimal_places=2)
+    preco = models.DecimalField(max_digits=10, decimal_places=2)
     estoque = models.PositiveIntegerField()
 
     def __str__(self):
@@ -64,14 +64,14 @@ class Funcionario(models.Model):
     data_nascimento = models.DateField()
     telefone = models.CharField(max_length=20)
     cargo = models.CharField(max_length=40)
-    salario = models.DecimalField(decimal_places=2)
+    salario = models.DecimalField(max_digits=10, decimal_places=2)
     horas_semanais = models.PositiveIntegerField()
 
     def __str__(self):
         return f"{self.nome} - {self.cargo} - {self.data_nascimento}"
     
     class Meta:
-        ordering = ['nomes']
+        ordering = ['nome']
 
 
 class Mecanico(Funcionario):
@@ -91,7 +91,7 @@ class ConsultorTecnico(Funcionario):
 
 class OrdemServico(models.Model):
     estado = models.CharField(max_length=20)
-    preco = models.DecimalField(decimal_places=2)
+    preco = models.DecimalField(max_digits=10, decimal_places=2)
     data_inicio = models.DateTimeField(auto_now_add=True)
     previsao_termino = models.DateTimeField(null=True)
     data_termino = models.DateTimeField(null=True)
@@ -115,7 +115,7 @@ class OrdemPecas(models.Model):
     peca = models.ForeignKey(Peca, on_delete=models.PROTECT)
     ordem_servico = models.ForeignKey(OrdemServico, on_delete=models.PROTECT)
     quantidade = models.PositiveIntegerField()
-    preco = models.DecimalField(decimal_places=2)
+    preco = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self):
         return f"({self.peca.nome} - {self.ordem_servico.carro.vin} - {self.quantidade})"
