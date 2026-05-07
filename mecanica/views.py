@@ -11,9 +11,30 @@ from .forms import (
     ClienteForm
 )
 
+
+class BaseListView(ListView):
+    list_columns = []
+    detail_url_name = None
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        columns = self.list_columns or [("Descricao", None)]
+        ctx["columns"] = columns
+        ctx["detail_url_name"] = self.detail_url_name
+        ctx["rows"] = [
+            {
+                "pk": obj.pk,
+                "values": [str(obj) if field is None else getattr(obj, field) for _, field in columns],
+            }
+            for obj in ctx["object_list"]
+        ]
+        return ctx
+
 # =========================
 # Cliente
 # =========================
+
+
 class ClienteCreate(CreateView):
     model = Cliente
     form_class = ClienteForm
@@ -38,10 +59,17 @@ class ClienteDelete(DeleteView):
     extra_context = {'titulo': 'Excluir Cliente', 'botao': 'Sim, excluir!'}
 
 
-class ClienteList(ListView):
+class ClienteList(BaseListView):
     model = Cliente
     template_name = 'mecanica/list.html'
     extra_context = {'titulo': 'Lista de Clientes'}
+    detail_url_name = 'cliente-detail'
+    list_columns = [
+        ("Nome", "nome"),
+        ("CPF", "cpf"),
+        ("Nascimento", "data_nascimento"),
+        ("Telefone", "telefone"),
+    ]
 
 
 class ClienteDetail(DetailView):
@@ -79,10 +107,11 @@ class CarroDelete(DeleteView):
     extra_context = {'titulo': 'Excluir Carro', 'botao': 'Sim, excluir!'}
 
 
-class CarroList(ListView):
+class CarroList(BaseListView):
     model = Carro
     template_name = 'mecanica/list.html'
     extra_context = {'titulo': 'Lista de Carros'}
+    detail_url_name = 'carro-detail'
 
 
 class CarroDetail(DetailView):
@@ -118,10 +147,11 @@ class ServicoDelete(DeleteView):
     extra_context = {'titulo': 'Excluir Serviço', 'botao': 'Sim, excluir!'}
 
 
-class ServicoList(ListView):
+class ServicoList(BaseListView):
     model = Servico
     template_name = 'mecanica/list.html'
     extra_context = {'titulo': 'Lista de Serviços'}
+    detail_url_name = 'servico-detail'
 
 
 class ServicoDetail(DetailView):
@@ -157,10 +187,11 @@ class PecaDelete(DeleteView):
     extra_context = {'titulo': 'Excluir Peça', 'botao': 'Sim, excluir!'}
 
 
-class PecaList(ListView):
+class PecaList(BaseListView):
     model = Peca
     template_name = 'mecanica/list.html'
     extra_context = {'titulo': 'Lista de Peças'}
+    detail_url_name = 'peca-detail'
 
 
 class PecaDetail(DetailView):
@@ -199,10 +230,11 @@ class FuncionarioDelete(DeleteView):
     extra_context = {'titulo': 'Excluir Funcionário', 'botao': 'Sim, excluir!'}
 
 
-class FuncionarioList(ListView):
+class FuncionarioList(BaseListView):
     model = Funcionario
     template_name = 'mecanica/list.html'
     extra_context = {'titulo': 'Lista de Funcionários'}
+    detail_url_name = 'funcionario-detail'
 
 
 class FuncionarioDetail(DetailView):
@@ -241,10 +273,11 @@ class MecanicoDelete(DeleteView):
     extra_context = {'titulo': 'Excluir Mecânico', 'botao': 'Sim, excluir!'}
 
 
-class MecanicoList(ListView):
+class MecanicoList(BaseListView):
     model = Mecanico
     template_name = 'mecanica/list.html'
     extra_context = {'titulo': 'Lista de Mecânicos'}
+    detail_url_name = 'mecanico-detail'
 
 
 class MecanicoDetail(DetailView):
@@ -284,10 +317,11 @@ class ConsultorTecnicoDelete(DeleteView):
                      'botao': 'Sim, excluir!'}
 
 
-class ConsultorTecnicoList(ListView):
+class ConsultorTecnicoList(BaseListView):
     model = ConsultorTecnico
     template_name = 'mecanica/list.html'
     extra_context = {'titulo': 'Lista de Consultores Técnicos'}
+    detail_url_name = 'consultor-tecnico-detail'
 
 
 class ConsultorTecnicoDetail(DetailView):
@@ -331,10 +365,11 @@ class OrdemServicoDelete(DeleteView):
                      'botao': 'Sim, excluir!'}
 
 
-class OrdemServicoList(ListView):
+class OrdemServicoList(BaseListView):
     model = OrdemServico
     template_name = 'mecanica/list.html'
     extra_context = {'titulo': 'Lista de Ordens de Serviço'}
+    detail_url_name = 'ordem-servico-detail'
 
 
 class OrdemServicoDetail(DetailView):
@@ -372,10 +407,11 @@ class OrdemPecasDelete(DeleteView):
                      'botao': 'Sim, excluir!'}
 
 
-class OrdemPecasList(ListView):
+class OrdemPecasList(BaseListView):
     model = OrdemPecas
     template_name = 'mecanica/list.html'
     extra_context = {'titulo': 'Lista de Ordens de Peças'}
+    detail_url_name = 'ordem-pecas-detail'
 
 
 class OrdemPecasDetail(DetailView):
