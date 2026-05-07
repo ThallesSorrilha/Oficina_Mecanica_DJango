@@ -7,13 +7,16 @@ from .models import (
     ConsultorTecnico, OrdemServico, OrdemPecas
 )
 
+from .forms import (
+    ClienteForm
+)
 
 # =========================
 # Cliente
 # =========================
 class ClienteCreate(CreateView):
     model = Cliente
-    fields = ['nome', 'cpf', 'data_nascimento', 'telefone']
+    form_class = ClienteForm
     template_name = 'mecanica/form.html'
     success_url = reverse_lazy('index')
     extra_context = {'titulo': 'Cadastro de Cliente', 'botao': 'Criar Cliente'}
