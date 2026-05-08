@@ -85,7 +85,7 @@ class Mecanico(Funcionario):
 class ConsultorTecnico(Funcionario):
     def __str__(self):
         return f"{self.nome}"
-    
+
     class Meta:
         ordering = ['nome']
 
@@ -99,7 +99,7 @@ class OrdemServico(models.Model):
     descricao = models.CharField(max_length=100, null=True)
     observacao = models.CharField(max_length=200, null=True)
     carro = models.ForeignKey(Carro, on_delete=models.PROTECT)
-    consultorTecnico = models.ForeignKey(
+    consultor_tecnico = models.ForeignKey(
         ConsultorTecnico, on_delete=models.PROTECT)
     mecanicos = models.ManyToManyField(Mecanico)
     servicos = models.ManyToManyField(Servico)
