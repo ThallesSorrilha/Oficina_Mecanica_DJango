@@ -93,7 +93,8 @@ class ClienteDelete(DeleteView):
 class ClienteList(BaseListView):
     model = Cliente
     template_name = 'mecanica/list.html'
-    extra_context = {'titulo': 'Lista de Clientes', 'cadastro': '+ Adicionar Cliente'}
+    extra_context = {'titulo': 'Lista de Clientes',
+                     'cadastro': '+ Adicionar Cliente'}
     detail_url_name = 'cliente-detail'
     create_url_name = 'cliente-create'
     list_columns = [
@@ -121,7 +122,7 @@ class CarroCreate(CreateView):
     fields = ['vin', 'placa', 'modelo', 'cor',
               'ano', 'quilometragem', 'cliente']
     template_name = 'mecanica/form.html'
-    success_url = reverse_lazy('index')
+    success_url = reverse_lazy('carro-list')
     extra_context = {'titulo': 'Cadastro de Carro', 'botao': 'Criar Carro'}
 
 
@@ -130,7 +131,7 @@ class CarroUpdate(UpdateView):
     fields = ['vin', 'placa', 'modelo', 'cor',
               'ano', 'quilometragem', 'cliente']
     template_name = 'mecanica/form.html'
-    success_url = reverse_lazy('index')
+    success_url = reverse_lazy('carro-list')
     extra_context = {'titulo': 'Editar dados do Carro',
                      'botao': 'Atualizar Carro'}
 
@@ -138,15 +139,23 @@ class CarroUpdate(UpdateView):
 class CarroDelete(DeleteView):
     model = Carro
     template_name = 'mecanica/form.html'
-    success_url = reverse_lazy('index')
+    success_url = reverse_lazy('carro-list')
     extra_context = {'titulo': 'Excluir Carro', 'botao': 'Sim, excluir!'}
 
 
 class CarroList(BaseListView):
     model = Carro
     template_name = 'mecanica/list.html'
-    extra_context = {'titulo': 'Lista de Carros'}
+    extra_context = {'titulo': 'Lista de Carros',
+                     'cadastro': '+ Adicionar Carro'}
     detail_url_name = 'carro-detail'
+    create_url_name = 'carro-create'
+    list_columns = [
+        ("Modelo", "modelo"),
+        ("Cor", "cor"),
+        ("Ano", "ano"),
+        ("Placa", "placa"),
+    ]
 
 
 class CarroDetail(BaseDetailView):
@@ -164,7 +173,7 @@ class ServicoCreate(CreateView):
     model = Servico
     fields = ['nome', 'descricao', 'preco']
     template_name = 'mecanica/form.html'
-    success_url = reverse_lazy('index')
+    success_url = reverse_lazy('servico-list')
     extra_context = {'titulo': 'Cadastro de Serviço', 'botao': 'Criar Serviço'}
 
 
@@ -172,7 +181,7 @@ class ServicoUpdate(UpdateView):
     model = Servico
     fields = ['nome', 'descricao', 'preco']
     template_name = 'mecanica/form.html'
-    success_url = reverse_lazy('index')
+    success_url = reverse_lazy('servico-list')
     extra_context = {'titulo': 'Editar dados do Serviço',
                      'botao': 'Atualizar Serviço'}
 
@@ -180,15 +189,22 @@ class ServicoUpdate(UpdateView):
 class ServicoDelete(DeleteView):
     model = Servico
     template_name = 'mecanica/form.html'
-    success_url = reverse_lazy('index')
+    success_url = reverse_lazy('servico-list')
     extra_context = {'titulo': 'Excluir Serviço', 'botao': 'Sim, excluir!'}
 
 
 class ServicoList(BaseListView):
     model = Servico
     template_name = 'mecanica/list.html'
-    extra_context = {'titulo': 'Lista de Serviços'}
+    extra_context = {'titulo': 'Lista de Serviços',
+                     'cadastro': '+ Adicionar Serviço'}
     detail_url_name = 'servico-detail'
+    create_url_name = 'servico-create'
+    list_columns = [
+        ("Nome", "nome"),
+        ("Descricao", "descricao"),
+        ("Preco", "preco"),
+    ]
 
 
 class ServicoDetail(BaseDetailView):
@@ -206,7 +222,7 @@ class PecaCreate(CreateView):
     model = Peca
     fields = ['nome', 'fabricante', 'codigo', 'descricao', 'preco', 'estoque']
     template_name = 'mecanica/form.html'
-    success_url = reverse_lazy('index')
+    success_url = reverse_lazy('peca-list')
     extra_context = {'titulo': 'Cadastro de Peça', 'botao': 'Criar Peça'}
 
 
@@ -214,7 +230,7 @@ class PecaUpdate(UpdateView):
     model = Peca
     fields = ['nome', 'fabricante', 'codigo', 'descricao', 'preco', 'estoque']
     template_name = 'mecanica/form.html'
-    success_url = reverse_lazy('index')
+    success_url = reverse_lazy('peca-list')
     extra_context = {'titulo': 'Editar dados da Peça',
                      'botao': 'Atualizar Peça'}
 
@@ -222,15 +238,23 @@ class PecaUpdate(UpdateView):
 class PecaDelete(DeleteView):
     model = Peca
     template_name = 'mecanica/form.html'
-    success_url = reverse_lazy('index')
+    success_url = reverse_lazy('peca-list')
     extra_context = {'titulo': 'Excluir Peça', 'botao': 'Sim, excluir!'}
 
 
 class PecaList(BaseListView):
     model = Peca
     template_name = 'mecanica/list.html'
-    extra_context = {'titulo': 'Lista de Peças'}
+    extra_context = {'titulo': 'Lista de Peças',
+                     'cadastro': '+ Adicionar Peça'}
     detail_url_name = 'peca-detail'
+    create_url_name = 'peca-create'
+    list_columns = [
+        ("Nome", "nome"),
+        ("Fabricante", "fabricante"),
+        ("Preco", "preco"),
+        ("Estoque", "estoque"),
+    ]
 
 
 class PecaDetail(BaseDetailView):
@@ -249,7 +273,7 @@ class FuncionarioCreate(CreateView):
     fields = ['nome', 'cpf', 'data_nascimento',
               'telefone', 'cargo', 'salario', 'horas_semanais']
     template_name = 'mecanica/form.html'
-    success_url = reverse_lazy('index')
+    success_url = reverse_lazy('funcionario-list')
     extra_context = {'titulo': 'Cadastro de Funcionário',
                      'botao': 'Criar Funcionário'}
 
@@ -259,7 +283,7 @@ class FuncionarioUpdate(UpdateView):
     fields = ['nome', 'cpf', 'data_nascimento',
               'telefone', 'cargo', 'salario', 'horas_semanais']
     template_name = 'mecanica/form.html'
-    success_url = reverse_lazy('index')
+    success_url = reverse_lazy('funcionario-list')
     extra_context = {'titulo': 'Editar dados do Funcionário',
                      'botao': 'Atualizar Funcionário'}
 
@@ -267,15 +291,23 @@ class FuncionarioUpdate(UpdateView):
 class FuncionarioDelete(DeleteView):
     model = Funcionario
     template_name = 'mecanica/form.html'
-    success_url = reverse_lazy('index')
+    success_url = reverse_lazy('funcionario-list')
     extra_context = {'titulo': 'Excluir Funcionário', 'botao': 'Sim, excluir!'}
 
 
 class FuncionarioList(BaseListView):
     model = Funcionario
     template_name = 'mecanica/list.html'
-    extra_context = {'titulo': 'Lista de Funcionários'}
+    extra_context = {'titulo': 'Lista de Funcionários',
+                     'cadastro': '+ Adicionar Funcionário'}
     detail_url_name = 'funcionario-detail'
+    create_url_name = 'funcionario-create'
+    list_columns = [
+        ("Nome", "nome"),
+        ("Cargo", "cargo"),
+        ("Horas Sem.", "horas_semanais"),
+        ("Telefone", "telefone"),
+    ]
 
 
 class FuncionarioDetail(BaseDetailView):
@@ -294,7 +326,7 @@ class MecanicoCreate(CreateView):
     fields = ['nome', 'cpf', 'data_nascimento', 'telefone',
               'cargo', 'salario', 'horas_semanais', 'especialidade']
     template_name = 'mecanica/form.html'
-    success_url = reverse_lazy('index')
+    success_url = reverse_lazy('mecanico-list')
     extra_context = {'titulo': 'Cadastro de Mecânico',
                      'botao': 'Criar Mecânico'}
 
@@ -304,7 +336,7 @@ class MecanicoUpdate(UpdateView):
     fields = ['nome', 'cpf', 'data_nascimento', 'telefone',
               'cargo', 'salario', 'horas_semanais', 'especialidade']
     template_name = 'mecanica/form.html'
-    success_url = reverse_lazy('index')
+    success_url = reverse_lazy('mecanico-list')
     extra_context = {'titulo': 'Editar dados do Mecânico',
                      'botao': 'Atualizar Mecânico'}
 
@@ -312,15 +344,21 @@ class MecanicoUpdate(UpdateView):
 class MecanicoDelete(DeleteView):
     model = Mecanico
     template_name = 'mecanica/form.html'
-    success_url = reverse_lazy('index')
+    success_url = reverse_lazy('mecanico-list')
     extra_context = {'titulo': 'Excluir Mecânico', 'botao': 'Sim, excluir!'}
 
 
 class MecanicoList(BaseListView):
     model = Mecanico
     template_name = 'mecanica/list.html'
-    extra_context = {'titulo': 'Lista de Mecânicos'}
+    extra_context = {'titulo': 'Lista de Mecânicos',
+                     'cadastro': '+ Adicionar Mecânico'}
     detail_url_name = 'mecanico-detail'
+    create_url_name = 'mecanico-create'
+    list_columns = [
+        ("Nome", "nome"),
+        ("Especialidade", "especialidade"),
+    ]
 
 
 class MecanicoDetail(BaseDetailView):
@@ -339,7 +377,7 @@ class ConsultorTecnicoCreate(CreateView):
     fields = ['nome', 'cpf', 'data_nascimento',
               'telefone', 'cargo', 'salario', 'horas_semanais']
     template_name = 'mecanica/form.html'
-    success_url = reverse_lazy('index')
+    success_url = reverse_lazy('consultor-tecnico-list')
     extra_context = {'titulo': 'Cadastro de Consultor Técnico',
                      'botao': 'Criar Consultor Técnico'}
 
@@ -349,7 +387,7 @@ class ConsultorTecnicoUpdate(UpdateView):
     fields = ['nome', 'cpf', 'data_nascimento',
               'telefone', 'cargo', 'salario', 'horas_semanais']
     template_name = 'mecanica/form.html'
-    success_url = reverse_lazy('index')
+    success_url = reverse_lazy('consultor-tecnico-list')
     extra_context = {'titulo': 'Editar dados do Consultor Técnico',
                      'botao': 'Atualizar Consultor Técnico'}
 
@@ -357,7 +395,7 @@ class ConsultorTecnicoUpdate(UpdateView):
 class ConsultorTecnicoDelete(DeleteView):
     model = ConsultorTecnico
     template_name = 'mecanica/form.html'
-    success_url = reverse_lazy('index')
+    success_url = reverse_lazy('consultor-tecnico-list')
     extra_context = {'titulo': 'Excluir Consultor Técnico',
                      'botao': 'Sim, excluir!'}
 
@@ -365,8 +403,13 @@ class ConsultorTecnicoDelete(DeleteView):
 class ConsultorTecnicoList(BaseListView):
     model = ConsultorTecnico
     template_name = 'mecanica/list.html'
-    extra_context = {'titulo': 'Lista de Consultores Técnicos'}
+    extra_context = {'titulo': 'Lista de Consultores Técnicos',
+                     'cadastro': '+ Adicionar Consultor Técnico'}
     detail_url_name = 'consultor-tecnico-detail'
+    create_url_name = 'consultor-tecnico-create'
+    list_columns = [
+        ("Nome", "nome"),
+    ]
 
 
 class ConsultorTecnicoDetail(BaseDetailView):
@@ -387,7 +430,7 @@ class OrdemServicoCreate(CreateView):
         'observacao', 'carro', 'consultorTecnico', 'mecanicos', 'servicos'
     ]
     template_name = 'mecanica/form.html'
-    success_url = reverse_lazy('index')
+    success_url = reverse_lazy('ordem-servico-list')
     extra_context = {'titulo': 'Cadastro de Ordem de Serviço',
                      'botao': 'Criar Ordem de Serviço'}
 
@@ -399,7 +442,7 @@ class OrdemServicoUpdate(UpdateView):
         'observacao', 'carro', 'consultorTecnico', 'mecanicos', 'servicos'
     ]
     template_name = 'mecanica/form.html'
-    success_url = reverse_lazy('index')
+    success_url = reverse_lazy('ordem-servico-list')
     extra_context = {'titulo': 'Editar dados da Ordem de Serviço',
                      'botao': 'Atualizar Ordem de Serviço'}
 
@@ -407,7 +450,7 @@ class OrdemServicoUpdate(UpdateView):
 class OrdemServicoDelete(DeleteView):
     model = OrdemServico
     template_name = 'mecanica/form.html'
-    success_url = reverse_lazy('index')
+    success_url = reverse_lazy('ordem-servico-list')
     extra_context = {'titulo': 'Excluir Ordem de Serviço',
                      'botao': 'Sim, excluir!'}
 
@@ -415,8 +458,16 @@ class OrdemServicoDelete(DeleteView):
 class OrdemServicoList(BaseListView):
     model = OrdemServico
     template_name = 'mecanica/list.html'
-    extra_context = {'titulo': 'Lista de Ordens de Serviço'}
+    extra_context = {'titulo': 'Lista de Ordens de Serviço',
+                     'cadastro': '+ Adicionar Ordem de Serviço'}
     detail_url_name = 'ordem-servico-detail'
+    create_url_name = 'ordem-servico-create'
+    list_columns = [
+        ("Estado", "estado"),
+        ("Preco", "preco"),
+        ("Consultor Técnico", "consultor_tecnico"),
+        ("Data Término", "data_termino"),
+    ]
 
 
 class OrdemServicoDetail(BaseDetailView):
@@ -434,7 +485,7 @@ class OrdemPecasCreate(CreateView):
     model = OrdemPecas
     fields = ['peca', 'ordem_servico', 'quantidade', 'preco']
     template_name = 'mecanica/form.html'
-    success_url = reverse_lazy('index')
+    success_url = reverse_lazy('ordem-pecas-list')
     extra_context = {'titulo': 'Cadastro de Ordem de Peças',
                      'botao': 'Criar Ordem de Peças'}
 
@@ -443,7 +494,7 @@ class OrdemPecasUpdate(UpdateView):
     model = OrdemPecas
     fields = ['peca', 'ordem_servico', 'quantidade', 'preco']
     template_name = 'mecanica/form.html'
-    success_url = reverse_lazy('index')
+    success_url = reverse_lazy('ordem-pecas-list')
     extra_context = {'titulo': 'Editar dados da Ordem de Peças',
                      'botao': 'Atualizar Ordem de Peças'}
 
@@ -451,7 +502,7 @@ class OrdemPecasUpdate(UpdateView):
 class OrdemPecasDelete(DeleteView):
     model = OrdemPecas
     template_name = 'mecanica/form.html'
-    success_url = reverse_lazy('index')
+    success_url = reverse_lazy('ordem-pecas-list')
     extra_context = {'titulo': 'Excluir Ordem de Peças',
                      'botao': 'Sim, excluir!'}
 
@@ -459,8 +510,16 @@ class OrdemPecasDelete(DeleteView):
 class OrdemPecasList(BaseListView):
     model = OrdemPecas
     template_name = 'mecanica/list.html'
-    extra_context = {'titulo': 'Lista de Ordens de Peças'}
+    extra_context = {'titulo': 'Lista de Ordens de Peças',
+                     'cadastro': '+ Adicionar Ordem de Peças'}
     detail_url_name = 'ordem-pecas-detail'
+    create_url_name = 'ordem-pecas-create'
+    list_columns = [
+        ("Peça", "peca"),
+        ("Ordem Serviço", "ordem_servico"),
+        ("Quantidade", "quantidade"),
+        ("Preço", "preco"),
+    ]
 
 
 class OrdemPecasDetail(BaseDetailView):
