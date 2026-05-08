@@ -4,7 +4,7 @@ from django.urls import reverse_lazy
 from django.forms import modelform_factory
 
 from .models import (
-    Cliente, Carro, Servico, Peca, Funcionario, Mecanico,
+    Cliente, Carro, Servico, Peca, Mecanico,
     ConsultorTecnico, OrdemServico, OrdemPecas
 )
 
@@ -71,6 +71,27 @@ class BaseCreateView(CreateView):
 class BaseUpdateView(UpdateView):
     def get_form_class(self):
         return modelform_factory(self.model, fields=self.fields, form=BaseModelForm)
+
+
+class BaseFuncionarioViewMixin:
+    fields = ['nome', 'cpf', 'data_nascimento', 'telefone', 'salario', 'horas_semanais']
+
+
+class BaseFuncionarioCreateView(BaseFuncionarioViewMixin, BaseCreateView):
+    pass
+
+
+class BaseFuncionarioUpdateView(BaseFuncionarioViewMixin, BaseUpdateView):
+    pass
+
+
+class BaseFuncionarioListView(BaseListView):
+    list_columns = [
+        ("Nome", "nome"),
+        ("CPF", "cpf"),
+        ("Telefone", "telefone"),
+        ("Horas Sem.", "horas_semanais"),
+    ]
 
 # =========================
 # Cliente
@@ -277,75 +298,18 @@ class PecaDetail(BaseDetailView):
 
 
 # =========================
-# Funcionario
-# =========================
-class FuncionarioCreate(BaseCreateView):
-    model = Funcionario
-    fields = ['nome', 'cpf', 'data_nascimento',
-              'telefone', 'cargo', 'salario', 'horas_semanais']
-    template_name = 'mecanica/form.html'
-    success_url = reverse_lazy('funcionario-list')
-    extra_context = {'titulo': 'Cadastro de Funcionário',
-                     'botao': 'Criar Funcionário'}
-
-
-class FuncionarioUpdate(BaseUpdateView):
-    model = Funcionario
-    fields = ['nome', 'cpf', 'data_nascimento',
-              'telefone', 'cargo', 'salario', 'horas_semanais']
-    template_name = 'mecanica/form.html'
-    success_url = reverse_lazy('funcionario-list')
-    extra_context = {'titulo': 'Editar dados do Funcionário',
-                     'botao': 'Atualizar Funcionário'}
-
-
-class FuncionarioDelete(DeleteView):
-    model = Funcionario
-    template_name = 'mecanica/form.html'
-    success_url = reverse_lazy('funcionario-list')
-    extra_context = {'titulo': 'Excluir Funcionário', 'botao': 'Sim, excluir!'}
-
-
-class FuncionarioList(BaseListView):
-    model = Funcionario
-    template_name = 'mecanica/list.html'
-    extra_context = {'titulo': 'Lista de Funcionários',
-                     'cadastro': '+ Adicionar Funcionário'}
-    detail_url_name = 'funcionario-detail'
-    create_url_name = 'funcionario-create'
-    list_columns = [
-        ("Nome", "nome"),
-        ("Cargo", "cargo"),
-        ("Horas Sem.", "horas_semanais"),
-        ("Telefone", "telefone"),
-    ]
-
-
-class FuncionarioDetail(BaseDetailView):
-    model = Funcionario
-    template_name = 'mecanica/detail.html'
-    extra_context = {'titulo': 'Detalhes do Funcionário'}
-    edit_url_name = 'funcionario-update'
-    delete_url_name = 'funcionario-delete'
-
-
-# =========================
 # Mecanico
 # =========================
-class MecanicoCreate(BaseCreateView):
+class MecanicoCreate(BaseFuncionarioCreateView):
     model = Mecanico
-    fields = ['nome', 'cpf', 'data_nascimento', 'telefone',
-              'cargo', 'salario', 'horas_semanais', 'especialidade']
     template_name = 'mecanica/form.html'
     success_url = reverse_lazy('mecanico-list')
     extra_context = {'titulo': 'Cadastro de Mecânico',
                      'botao': 'Criar Mecânico'}
 
 
-class MecanicoUpdate(BaseUpdateView):
+class MecanicoUpdate(BaseFuncionarioUpdateView):
     model = Mecanico
-    fields = ['nome', 'cpf', 'data_nascimento', 'telefone',
-              'cargo', 'salario', 'horas_semanais', 'especialidade']
     template_name = 'mecanica/form.html'
     success_url = reverse_lazy('mecanico-list')
     extra_context = {'titulo': 'Editar dados do Mecânico',
@@ -359,17 +323,13 @@ class MecanicoDelete(DeleteView):
     extra_context = {'titulo': 'Excluir Mecânico', 'botao': 'Sim, excluir!'}
 
 
-class MecanicoList(BaseListView):
+class MecanicoList(BaseFuncionarioListView):
     model = Mecanico
     template_name = 'mecanica/list.html'
     extra_context = {'titulo': 'Lista de Mecânicos',
                      'cadastro': '+ Adicionar Mecânico'}
     detail_url_name = 'mecanico-detail'
     create_url_name = 'mecanico-create'
-    list_columns = [
-        ("Nome", "nome"),
-        ("Especialidade", "especialidade"),
-    ]
 
 
 class MecanicoDetail(BaseDetailView):
@@ -383,20 +343,16 @@ class MecanicoDetail(BaseDetailView):
 # =========================
 # ConsultorTecnico
 # =========================
-class ConsultorTecnicoCreate(BaseCreateView):
+class ConsultorTecnicoCreate(BaseFuncionarioCreateView):
     model = ConsultorTecnico
-    fields = ['nome', 'cpf', 'data_nascimento',
-              'telefone', 'cargo', 'salario', 'horas_semanais']
     template_name = 'mecanica/form.html'
     success_url = reverse_lazy('consultor-tecnico-list')
     extra_context = {'titulo': 'Cadastro de Consultor Técnico',
                      'botao': 'Criar Consultor Técnico'}
 
 
-class ConsultorTecnicoUpdate(BaseUpdateView):
+class ConsultorTecnicoUpdate(BaseFuncionarioUpdateView):
     model = ConsultorTecnico
-    fields = ['nome', 'cpf', 'data_nascimento',
-              'telefone', 'cargo', 'salario', 'horas_semanais']
     template_name = 'mecanica/form.html'
     success_url = reverse_lazy('consultor-tecnico-list')
     extra_context = {'titulo': 'Editar dados do Consultor Técnico',
@@ -411,16 +367,13 @@ class ConsultorTecnicoDelete(DeleteView):
                      'botao': 'Sim, excluir!'}
 
 
-class ConsultorTecnicoList(BaseListView):
+class ConsultorTecnicoList(BaseFuncionarioListView):
     model = ConsultorTecnico
     template_name = 'mecanica/list.html'
     extra_context = {'titulo': 'Lista de Consultores Técnicos',
                      'cadastro': '+ Adicionar Consultor Técnico'}
     detail_url_name = 'consultor-tecnico-detail'
     create_url_name = 'consultor-tecnico-create'
-    list_columns = [
-        ("Nome", "nome"),
-    ]
 
 
 class ConsultorTecnicoDetail(BaseDetailView):

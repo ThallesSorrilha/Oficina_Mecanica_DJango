@@ -64,30 +64,30 @@ class Funcionario(models.Model):
     cpf = models.CharField(unique=True, max_length=11)
     data_nascimento = models.DateField()
     telefone = models.CharField(max_length=20)
-    cargo = models.CharField(max_length=40)
     salario = models.DecimalField(max_digits=10, decimal_places=2)
     horas_semanais = models.PositiveIntegerField()
 
     def __str__(self):
-        return f"{self.nome} - {self.cargo} - {self.data_nascimento}"
+        return f"{self.nome} - {self.data_nascimento}"
 
     class Meta:
         ordering = ['nome']
 
 
 class Mecanico(Funcionario):
-    especialidade = models.CharField(max_length=40, null=True)
-
     def __str__(self):
-        return f"{self.nome} - {self.especialidade}"
+        return f"{self.nome}"
 
     class Meta:
-        ordering = ['especialidade']
+        ordering = ['nome']
 
 
 class ConsultorTecnico(Funcionario):
     def __str__(self):
         return f"{self.nome}"
+    
+    class Meta:
+        ordering = ['nome']
 
 
 class OrdemServico(models.Model):
