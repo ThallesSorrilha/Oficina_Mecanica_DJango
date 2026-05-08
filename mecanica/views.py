@@ -1,6 +1,7 @@
 from django.views.generic import CreateView, UpdateView, DeleteView, DetailView
 from django.views.generic.list import ListView
 from django.urls import reverse_lazy
+from django.forms import modelform_factory
 
 from .models import (
     Cliente, Carro, Servico, Peca, Funcionario, Mecanico,
@@ -8,7 +9,7 @@ from .models import (
 )
 
 from .forms import (
-    ClienteForm
+    BaseModelForm
 )
 
 from .details import (
@@ -61,20 +62,30 @@ class BaseDetailView(DetailView):
         ctx["delete_url_name"] = self.delete_url_name
         return ctx
 
+
+class BaseCreateView(CreateView):
+    def get_form_class(self):
+        return modelform_factory(self.model, fields=self.fields, form=BaseModelForm)
+
+
+class BaseUpdateView(UpdateView):
+    def get_form_class(self):
+        return modelform_factory(self.model, fields=self.fields, form=BaseModelForm)
+
 # =========================
 # Cliente
 # =========================
 
 
-class ClienteCreate(CreateView):
+class ClienteCreate(BaseCreateView):
     model = Cliente
-    form_class = ClienteForm
+    fields = ['nome', 'cpf', 'data_nascimento', 'telefone']
     template_name = 'mecanica/form.html'
     success_url = reverse_lazy('cliente-list')
     extra_context = {'titulo': 'Cadastro de Cliente', 'botao': 'Criar Cliente'}
 
 
-class ClienteUpdate(UpdateView):
+class ClienteUpdate(BaseUpdateView):
     model = Cliente
     fields = ['nome', 'cpf', 'data_nascimento', 'telefone']
     template_name = 'mecanica/form.html'
@@ -117,7 +128,7 @@ class ClienteDetail(BaseDetailView):
 # =========================
 # Carro
 # =========================
-class CarroCreate(CreateView):
+class CarroCreate(BaseCreateView):
     model = Carro
     fields = ['vin', 'placa', 'modelo', 'cor',
               'ano', 'quilometragem', 'cliente']
@@ -126,7 +137,7 @@ class CarroCreate(CreateView):
     extra_context = {'titulo': 'Cadastro de Carro', 'botao': 'Criar Carro'}
 
 
-class CarroUpdate(UpdateView):
+class CarroUpdate(BaseUpdateView):
     model = Carro
     fields = ['vin', 'placa', 'modelo', 'cor',
               'ano', 'quilometragem', 'cliente']
@@ -169,7 +180,7 @@ class CarroDetail(BaseDetailView):
 # =========================
 # Servico
 # =========================
-class ServicoCreate(CreateView):
+class ServicoCreate(BaseCreateView):
     model = Servico
     fields = ['nome', 'descricao', 'preco']
     template_name = 'mecanica/form.html'
@@ -177,7 +188,7 @@ class ServicoCreate(CreateView):
     extra_context = {'titulo': 'Cadastro de Serviço', 'botao': 'Criar Serviço'}
 
 
-class ServicoUpdate(UpdateView):
+class ServicoUpdate(BaseUpdateView):
     model = Servico
     fields = ['nome', 'descricao', 'preco']
     template_name = 'mecanica/form.html'
@@ -218,7 +229,7 @@ class ServicoDetail(BaseDetailView):
 # =========================
 # Peca
 # =========================
-class PecaCreate(CreateView):
+class PecaCreate(BaseCreateView):
     model = Peca
     fields = ['nome', 'fabricante', 'codigo', 'descricao', 'preco', 'estoque']
     template_name = 'mecanica/form.html'
@@ -226,7 +237,7 @@ class PecaCreate(CreateView):
     extra_context = {'titulo': 'Cadastro de Peça', 'botao': 'Criar Peça'}
 
 
-class PecaUpdate(UpdateView):
+class PecaUpdate(BaseUpdateView):
     model = Peca
     fields = ['nome', 'fabricante', 'codigo', 'descricao', 'preco', 'estoque']
     template_name = 'mecanica/form.html'
@@ -268,7 +279,7 @@ class PecaDetail(BaseDetailView):
 # =========================
 # Funcionario
 # =========================
-class FuncionarioCreate(CreateView):
+class FuncionarioCreate(BaseCreateView):
     model = Funcionario
     fields = ['nome', 'cpf', 'data_nascimento',
               'telefone', 'cargo', 'salario', 'horas_semanais']
@@ -278,7 +289,7 @@ class FuncionarioCreate(CreateView):
                      'botao': 'Criar Funcionário'}
 
 
-class FuncionarioUpdate(UpdateView):
+class FuncionarioUpdate(BaseUpdateView):
     model = Funcionario
     fields = ['nome', 'cpf', 'data_nascimento',
               'telefone', 'cargo', 'salario', 'horas_semanais']
@@ -321,7 +332,7 @@ class FuncionarioDetail(BaseDetailView):
 # =========================
 # Mecanico
 # =========================
-class MecanicoCreate(CreateView):
+class MecanicoCreate(BaseCreateView):
     model = Mecanico
     fields = ['nome', 'cpf', 'data_nascimento', 'telefone',
               'cargo', 'salario', 'horas_semanais', 'especialidade']
@@ -331,7 +342,7 @@ class MecanicoCreate(CreateView):
                      'botao': 'Criar Mecânico'}
 
 
-class MecanicoUpdate(UpdateView):
+class MecanicoUpdate(BaseUpdateView):
     model = Mecanico
     fields = ['nome', 'cpf', 'data_nascimento', 'telefone',
               'cargo', 'salario', 'horas_semanais', 'especialidade']
@@ -372,7 +383,7 @@ class MecanicoDetail(BaseDetailView):
 # =========================
 # ConsultorTecnico
 # =========================
-class ConsultorTecnicoCreate(CreateView):
+class ConsultorTecnicoCreate(BaseCreateView):
     model = ConsultorTecnico
     fields = ['nome', 'cpf', 'data_nascimento',
               'telefone', 'cargo', 'salario', 'horas_semanais']
@@ -382,7 +393,7 @@ class ConsultorTecnicoCreate(CreateView):
                      'botao': 'Criar Consultor Técnico'}
 
 
-class ConsultorTecnicoUpdate(UpdateView):
+class ConsultorTecnicoUpdate(BaseUpdateView):
     model = ConsultorTecnico
     fields = ['nome', 'cpf', 'data_nascimento',
               'telefone', 'cargo', 'salario', 'horas_semanais']
@@ -423,7 +434,7 @@ class ConsultorTecnicoDetail(BaseDetailView):
 # =========================
 # OrdemServico
 # =========================
-class OrdemServicoCreate(CreateView):
+class OrdemServicoCreate(BaseCreateView):
     model = OrdemServico
     fields = [
         'estado', 'preco', 'previsao_termino', 'data_termino', 'descricao',
@@ -435,7 +446,7 @@ class OrdemServicoCreate(CreateView):
                      'botao': 'Criar Ordem de Serviço'}
 
 
-class OrdemServicoUpdate(UpdateView):
+class OrdemServicoUpdate(BaseUpdateView):
     model = OrdemServico
     fields = [
         'estado', 'preco', 'previsao_termino', 'data_termino', 'descricao',
@@ -481,7 +492,7 @@ class OrdemServicoDetail(BaseDetailView):
 # =========================
 # OrdemPecas
 # =========================
-class OrdemPecasCreate(CreateView):
+class OrdemPecasCreate(BaseCreateView):
     model = OrdemPecas
     fields = ['peca', 'ordem_servico', 'quantidade', 'preco']
     template_name = 'mecanica/form.html'
@@ -490,7 +501,7 @@ class OrdemPecasCreate(CreateView):
                      'botao': 'Criar Ordem de Peças'}
 
 
-class OrdemPecasUpdate(UpdateView):
+class OrdemPecasUpdate(BaseUpdateView):
     model = OrdemPecas
     fields = ['peca', 'ordem_servico', 'quantidade', 'preco']
     template_name = 'mecanica/form.html'

@@ -2,6 +2,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+
 class Cliente(models.Model):
     nome = models.CharField(max_length=60)
     cpf = models.CharField(unique=True, max_length=11)
@@ -10,7 +11,7 @@ class Cliente(models.Model):
 
     def __str__(self):
         return f"{self.nome} - {self.data_nascimento} - {self.cpf}"
-    
+
     class Meta:
         ordering = ['nome']
 
@@ -26,7 +27,7 @@ class Carro(models.Model):
 
     def __str__(self):
         return f"{self.modelo} - {self.cor} - {self.placa}"
-    
+
     class Meta:
         ordering = ['modelo']
 
@@ -38,7 +39,7 @@ class Servico(models.Model):
 
     def __str__(self):
         return f"{self.nome}"
-    
+
     class Meta:
         ordering = ['nome']
 
@@ -53,7 +54,7 @@ class Peca(models.Model):
 
     def __str__(self):
         return f"{self.nome} - {self.fabricante} - {self.codigo}"
-    
+
     class Meta:
         ordering = ['nome']
 
@@ -69,7 +70,7 @@ class Funcionario(models.Model):
 
     def __str__(self):
         return f"{self.nome} - {self.cargo} - {self.data_nascimento}"
-    
+
     class Meta:
         ordering = ['nome']
 
@@ -79,7 +80,7 @@ class Mecanico(Funcionario):
 
     def __str__(self):
         return f"{self.nome} - {self.especialidade}"
-    
+
     class Meta:
         ordering = ['especialidade']
 
@@ -105,7 +106,7 @@ class OrdemServico(models.Model):
 
     def __str__(self):
         return f"{self.carro.modelo} - {self.carro.cor} - {self.estado} - {self.data_inicio}"
-    
+
     class Meta:
         verbose_name_plural = "OrdensServico"
         ordering = ['-data_inicio']
@@ -119,7 +120,7 @@ class OrdemPecas(models.Model):
 
     def __str__(self):
         return f"({self.peca.nome} - {self.ordem_servico.carro.vin} - {self.quantidade})"
-    
+
     class Meta:
         verbose_name_plural = "OrdensPecas"
         ordering = ['ordem_servico']
