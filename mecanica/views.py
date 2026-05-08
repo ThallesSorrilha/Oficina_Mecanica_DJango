@@ -19,12 +19,14 @@ from .details import (
 class BaseListView(ListView):
     list_columns = []
     detail_url_name = None
+    create_url_name = None
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
         columns = self.list_columns or [("Descricao", None)]
         ctx["columns"] = columns
         ctx["detail_url_name"] = self.detail_url_name
+        ctx["create_url_name"] = self.create_url_name
         ctx["rows"] = [
             {
                 "pk": obj.pk,
@@ -68,7 +70,7 @@ class ClienteCreate(CreateView):
     model = Cliente
     form_class = ClienteForm
     template_name = 'mecanica/form.html'
-    success_url = reverse_lazy('index')
+    success_url = reverse_lazy('cliente-list')
     extra_context = {'titulo': 'Cadastro de Cliente', 'botao': 'Criar Cliente'}
 
 
@@ -76,7 +78,7 @@ class ClienteUpdate(UpdateView):
     model = Cliente
     fields = ['nome', 'cpf', 'data_nascimento', 'telefone']
     template_name = 'mecanica/form.html'
-    success_url = reverse_lazy('index')
+    success_url = reverse_lazy('cliente-list')
     extra_context = {'titulo': 'Editar dados do Cliente',
                      'botao': 'Atualizar Cliente'}
 
@@ -84,15 +86,16 @@ class ClienteUpdate(UpdateView):
 class ClienteDelete(DeleteView):
     model = Cliente
     template_name = 'mecanica/form.html'
-    success_url = reverse_lazy('index')
+    success_url = reverse_lazy('cliente-list')
     extra_context = {'titulo': 'Excluir Cliente', 'botao': 'Sim, excluir!'}
 
 
 class ClienteList(BaseListView):
     model = Cliente
     template_name = 'mecanica/list.html'
-    extra_context = {'titulo': 'Lista de Clientes'}
+    extra_context = {'titulo': 'Lista de Clientes', 'cadastro': '+ Adicionar Cliente'}
     detail_url_name = 'cliente-detail'
+    create_url_name = 'cliente-create'
     list_columns = [
         ("Nome", "nome"),
         ("CPF", "cpf"),

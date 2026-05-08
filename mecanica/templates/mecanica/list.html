@@ -6,9 +6,16 @@
       class="d-flex align-items-center justify-content-between mb-4 border-bottom pb-2"
     >
       <h3 class="m-0">{{ titulo }}</h3>
-      <span class="badge bg-primary-subtle text-primary border"
-        >Total: {{ object_list|length }}</span
-      >
+      <div class="d-flex align-items-center gap-2">
+        {% if create_url_name %}
+        <a class="btn btn-sm btn-primary" href="{% url create_url_name %}"
+          >{{ cadastro }}</a
+        >
+        {% endif %}
+        <span class="badge bg-primary-subtle text-primary border"
+          >Total: {{ object_list|length }}</span
+        >
+      </div>
     </div>
 
     <div class="card shadow-sm border-0">
