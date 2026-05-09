@@ -8,13 +8,7 @@ from .models import (
     ConsultorTecnico, OrdemServico, OrdemPecas
 )
 
-from .forms import (
-    BaseModelForm
-)
-
-from .details import (
-    CLIENTE_DETAIL_FIELDS
-)
+from .forms import BaseModelForm
 
 
 class BaseListView(ListView):
@@ -39,7 +33,6 @@ class BaseListView(ListView):
 
 
 class BaseDetailView(DetailView):
-    detail_fields = []
     edit_url_name = None
     delete_url_name = None
 
@@ -53,7 +46,7 @@ class BaseDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
-        fields = self.detail_fields or self.get_default_detail_fields()
+        fields = self.get_default_detail_fields()
         ctx["detail_rows"] = [
             {"label": label, "value": getattr(ctx["object"], field)}
             for label, field in fields
@@ -65,23 +58,21 @@ class BaseDetailView(DetailView):
 
 class BaseCreateView(CreateView):
     def get_form_class(self):
-        return modelform_factory(self.model, fields=self.fields, form=BaseModelForm)
+        exclude = getattr(self, "exclude_fields", ["id"])
+        return modelform_factory(self.model, exclude=exclude, form=BaseModelForm)
 
 
 class BaseUpdateView(UpdateView):
     def get_form_class(self):
-        return modelform_factory(self.model, fields=self.fields, form=BaseModelForm)
+        exclude = getattr(self, "exclude_fields", ["id"])
+        return modelform_factory(self.model, exclude=exclude, form=BaseModelForm)
 
 
-class BaseFuncionarioViewMixin:
-    fields = ['nome', 'cpf', 'data_nascimento', 'telefone', 'salario', 'horas_semanais']
-
-
-class BaseFuncionarioCreateView(BaseFuncionarioViewMixin, BaseCreateView):
+class BaseFuncionarioCreateView(BaseCreateView):
     pass
 
 
-class BaseFuncionarioUpdateView(BaseFuncionarioViewMixin, BaseUpdateView):
+class BaseFuncionarioUpdateView(BaseUpdateView):
     pass
 
 
@@ -100,7 +91,6 @@ class BaseFuncionarioListView(BaseListView):
 
 class ClienteCreate(BaseCreateView):
     model = Cliente
-    fields = ['nome', 'cpf', 'data_nascimento', 'telefone']
     template_name = 'mecanica/form.html'
     success_url = reverse_lazy('cliente-list')
     extra_context = {'titulo': 'Cadastro de Cliente', 'botao': 'Criar Cliente'}
@@ -108,7 +98,6 @@ class ClienteCreate(BaseCreateView):
 
 class ClienteUpdate(BaseUpdateView):
     model = Cliente
-    fields = ['nome', 'cpf', 'data_nascimento', 'telefone']
     template_name = 'mecanica/form.html'
     success_url = reverse_lazy('cliente-list')
     extra_context = {'titulo': 'Editar dados do Cliente',
@@ -141,7 +130,6 @@ class ClienteDetail(BaseDetailView):
     model = Cliente
     template_name = 'mecanica/detail.html'
     extra_context = {'titulo': 'Detalhes do Cliente'}
-    detail_fields = CLIENTE_DETAIL_FIELDS
     edit_url_name = 'cliente-update'
     delete_url_name = 'cliente-delete'
 
@@ -151,8 +139,6 @@ class ClienteDetail(BaseDetailView):
 # =========================
 class CarroCreate(BaseCreateView):
     model = Carro
-    fields = ['vin', 'placa', 'modelo', 'cor',
-              'ano', 'quilometragem', 'cliente']
     template_name = 'mecanica/form.html'
     success_url = reverse_lazy('carro-list')
     extra_context = {'titulo': 'Cadastro de Carro', 'botao': 'Criar Carro'}
@@ -160,8 +146,6 @@ class CarroCreate(BaseCreateView):
 
 class CarroUpdate(BaseUpdateView):
     model = Carro
-    fields = ['vin', 'placa', 'modelo', 'cor',
-              'ano', 'quilometragem', 'cliente']
     template_name = 'mecanica/form.html'
     success_url = reverse_lazy('carro-list')
     extra_context = {'titulo': 'Editar dados do Carro',
@@ -203,7 +187,6 @@ class CarroDetail(BaseDetailView):
 # =========================
 class ServicoCreate(BaseCreateView):
     model = Servico
-    fields = ['nome', 'descricao', 'preco']
     template_name = 'mecanica/form.html'
     success_url = reverse_lazy('servico-list')
     extra_context = {'titulo': 'Cadastro de Serviço', 'botao': 'Criar Serviço'}
@@ -211,7 +194,6 @@ class ServicoCreate(BaseCreateView):
 
 class ServicoUpdate(BaseUpdateView):
     model = Servico
-    fields = ['nome', 'descricao', 'preco']
     template_name = 'mecanica/form.html'
     success_url = reverse_lazy('servico-list')
     extra_context = {'titulo': 'Editar dados do Serviço',
@@ -252,7 +234,6 @@ class ServicoDetail(BaseDetailView):
 # =========================
 class PecaCreate(BaseCreateView):
     model = Peca
-    fields = ['nome', 'fabricante', 'codigo', 'descricao', 'preco', 'estoque']
     template_name = 'mecanica/form.html'
     success_url = reverse_lazy('peca-list')
     extra_context = {'titulo': 'Cadastro de Peça', 'botao': 'Criar Peça'}
@@ -260,7 +241,6 @@ class PecaCreate(BaseCreateView):
 
 class PecaUpdate(BaseUpdateView):
     model = Peca
-    fields = ['nome', 'fabricante', 'codigo', 'descricao', 'preco', 'estoque']
     template_name = 'mecanica/form.html'
     success_url = reverse_lazy('peca-list')
     extra_context = {'titulo': 'Editar dados da Peça',
@@ -389,10 +369,6 @@ class ConsultorTecnicoDetail(BaseDetailView):
 # =========================
 class OrdemServicoCreate(BaseCreateView):
     model = OrdemServico
-    fields = [
-        'estado', 'preco', 'previsao_termino', 'data_termino', 'descricao',
-        'observacao', 'carro', 'consultorTecnico', 'mecanicos', 'servicos'
-    ]
     template_name = 'mecanica/form.html'
     success_url = reverse_lazy('ordem-servico-list')
     extra_context = {'titulo': 'Cadastro de Ordem de Serviço',
@@ -401,10 +377,6 @@ class OrdemServicoCreate(BaseCreateView):
 
 class OrdemServicoUpdate(BaseUpdateView):
     model = OrdemServico
-    fields = [
-        'estado', 'preco', 'previsao_termino', 'data_termino', 'descricao',
-        'observacao', 'carro', 'consultorTecnico', 'mecanicos', 'servicos'
-    ]
     template_name = 'mecanica/form.html'
     success_url = reverse_lazy('ordem-servico-list')
     extra_context = {'titulo': 'Editar dados da Ordem de Serviço',
@@ -447,7 +419,6 @@ class OrdemServicoDetail(BaseDetailView):
 # =========================
 class OrdemPecasCreate(BaseCreateView):
     model = OrdemPecas
-    fields = ['peca', 'ordem_servico', 'quantidade', 'preco']
     template_name = 'mecanica/form.html'
     success_url = reverse_lazy('ordem-pecas-list')
     extra_context = {'titulo': 'Cadastro de Ordem de Peças',
@@ -456,7 +427,6 @@ class OrdemPecasCreate(BaseCreateView):
 
 class OrdemPecasUpdate(BaseUpdateView):
     model = OrdemPecas
-    fields = ['peca', 'ordem_servico', 'quantidade', 'preco']
     template_name = 'mecanica/form.html'
     success_url = reverse_lazy('ordem-pecas-list')
     extra_context = {'titulo': 'Editar dados da Ordem de Peças',
