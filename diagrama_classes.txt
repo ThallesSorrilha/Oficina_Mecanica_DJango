@@ -1,0 +1,86 @@
+@startuml
+
+class Funcionario {
+  + nome: String
+  + cpf: String
+  + data_nascimento: Date
+  + telefone: String
+  + cargo: String
+  + salario: double
+  + horas_semanais: double
+}
+
+class Mecanico {
+  + especialidade: String
+}
+
+class ConsultorTecnico {
+}
+
+' Herança
+Funcionario <|-- Mecanico
+Funcionario <|-- ConsultorTecnico
+
+class Cliente {
+  + nome: String
+  + cpf: String
+  + data_nascimento: Date
+  + telefone: String
+}
+
+class Carro {
+  + vin: String
+  + placa: String
+  + modelo: String
+  + ano: int
+  + quilometragem: int
+  + cliente: Cliente
+}
+
+Cliente "1" -- "0..n" Carro
+
+class OrdemServico {
+  + estado: String
+  + preco: double
+  + data_inicio: DateTime
+  + previsao_termino: DateTime
+  + conclusao: DateTime
+  + descricao: String
+  + observacao: String
+  + carro: Carro
+  + mecanicos: List<Mecanicos>
+  + consultor_tecnico: ConsultorTecnico
+  + servicos: List<Servico>
+}
+
+' Associações da Ordem de Serviço
+Carro "1" -- "0..n" OrdemServico
+Mecanico "1..n" -- "0..n" OrdemServico
+ConsultorTecnico "1" -- "0..n" OrdemServico
+
+class ItensPeca {
+  + peca: Peca
+  + quantidade: int
+  + valor: double
+}
+
+class Peca {
+  + fabricante: String
+  + codigo: String
+  + descricao: String
+  + preco: double
+  + estoque: int
+}
+
+OrdemServico "1" -- "0..n" ItensPeca
+ItensPeca "0..n" -- "1" Peca
+
+class Servico {
+  + nome: String
+  + descricao: String
+  + preco: Decimal
+}
+
+OrdemServico "0..n" -- "1..n" Servico
+
+@enduml
