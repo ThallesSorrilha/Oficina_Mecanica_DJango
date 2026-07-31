@@ -195,10 +195,8 @@
               </a>
               <ul class="dropdown-menu">
                 <li><span class="dropdown-header">Funcionários</span></li>
-                <li>
-                </li>
-                <li>
-                </li>
+                <li></li>
+                <li></li>
                 <li><hr class="dropdown-divider" /></li>
                 <li><span class="dropdown-header">Mecânicos</span></li>
                 <li>
@@ -236,15 +234,13 @@
 
           <!-- ── Auth area (alinhado ao final) ──────────────────────────────────── -->
           <div class="d-flex align-items-center gap-2 mt-3 mt-lg-0">
-            <!-- ESTADO: NÃO AUTENTICADO — botão Login/Cadastro -->
+            <!-- ESTADO: NÃO AUTENTICADO — link Sobre -->
             <div id="authGuest" class="d-flex gap-2">
               <a
-                href="#"
-                class="btn btn-sm btn-auth"
-                data-bs-toggle="modal"
-                data-bs-target="#modalLogin"
+                href="{% url 'sobre' %}"
+                class="btn btn-primary btn-sm px-3 fw-semibold"
               >
-                <i class="bi bi-box-arrow-in-right me-1"></i>Entrar / Cadastrar
+                <i class="bi bi-box-arrow-in-right me-1"></i>Sobre
               </a>
             </div>
 
@@ -639,162 +635,7 @@
       </div>
     </footer>
 
-    <!-- ═══════════════════════════════════════════════════════════════
-     MODAL LOGIN / CADASTRO
-════════════════════════════════════════════════════════════════════ -->
-    <div class="modal fade" id="modalLogin" tabindex="-1">
-      <div class="modal-dialog modal-dialog-centered">
-        <div
-          class="modal-content border-0 shadow-lg"
-          style="background: #25544d; border-radius: 1rem !important"
-        >
-          <div class="modal-body p-4">
-            <h5
-              class="text-white mb-1"
-              style="
-                font-family: &quot;Syne&quot;, sans-serif;
-                font-weight: 700;
-              "
-            >
-              Acessar MecânicaPro
-            </h5>
-            <p class="text-white-50 small mb-4">
-              Entre ou crie sua conta para continuar.
-            </p>
-
-            <!-- Tabs -->
-            <ul class="nav nav-pills mb-4 gap-1" id="authTab">
-              <li class="nav-item">
-                <button
-                  class="nav-link active"
-                  data-bs-toggle="tab"
-                  data-bs-target="#tabLogin"
-                  style="background: rgba(26, 188, 156, 0.2); color: #fff"
-                >
-                  Entrar
-                </button>
-              </li>
-              <li class="nav-item">
-                <button
-                  class="nav-link"
-                  data-bs-toggle="tab"
-                  data-bs-target="#tabCadastro"
-                  style="
-                    background: transparent;
-                    color: rgba(255, 255, 255, 0.6);
-                  "
-                >
-                  Cadastrar
-                </button>
-              </li>
-            </ul>
-
-            <div class="tab-content">
-              <!-- Login -->
-              <div class="tab-pane fade show active" id="tabLogin">
-                <div class="mb-3">
-                  <label class="form-label text-white-50 small">E-mail</label>
-                  <input
-                    type="email"
-                    class="form-control bg-transparent text-white border-secondary"
-                    placeholder="seuemail@exemplo.com"
-                  />
-                </div>
-                <div class="mb-3">
-                  <label class="form-label text-white-50 small">Senha</label>
-                  <input
-                    type="password"
-                    class="form-control bg-transparent text-white border-secondary"
-                    placeholder="••••••••"
-                  />
-                </div>
-                <div
-                  class="d-flex justify-content-between align-items-center mb-4"
-                >
-                  <div class="form-check">
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      id="lembrarMe"
-                    />
-                    <label
-                      class="form-check-label text-white-50 small"
-                      for="lembrarMe"
-                      >Lembrar-me</label
-                    >
-                  </div>
-                  <a href="#" class="small" style="color: var(--mp-turquoise)"
-                    >Esqueci minha senha</a
-                  >
-                </div>
-                <button class="btn btn-auth w-100 py-2" id="btnSimulateLogin">
-                  <i class="bi bi-box-arrow-in-right me-2"></i>Entrar
-                </button>
-              </div>
-              <!-- Cadastro -->
-              <div class="tab-pane fade" id="tabCadastro">
-                <div class="mb-3">
-                  <label class="form-label text-white-50 small"
-                    >Nome completo</label
-                  >
-                  <input
-                    type="text"
-                    class="form-control bg-transparent text-white border-secondary"
-                    placeholder="João Pedro Silva"
-                  />
-                </div>
-                <div class="mb-3">
-                  <label class="form-label text-white-50 small">E-mail</label>
-                  <input
-                    type="email"
-                    class="form-control bg-transparent text-white border-secondary"
-                    placeholder="seuemail@exemplo.com"
-                  />
-                </div>
-                <div class="mb-3">
-                  <label class="form-label text-white-50 small">Senha</label>
-                  <input
-                    type="password"
-                    class="form-control bg-transparent text-white border-secondary"
-                    placeholder="••••••••"
-                  />
-                </div>
-                <button class="btn btn-auth w-100 py-2">
-                  <i class="bi bi-person-plus me-2"></i>Criar conta
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <!-- Scripts -->
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-    <script>
-      $(function () {
-        // ─── Simula login (demo) ───────────────────────────────────────
-        $("#btnSimulateLogin").on("click", function () {
-          $("#modalLogin").modal("hide");
-          $("#authGuest").addClass("d-none");
-          $("#authUser").removeClass("d-none");
-        });
-
-        // ─── Simula logout ─────────────────────────────────────────────
-        $("#btnLogout").on("click", function (e) {
-          e.preventDefault();
-          $("#authUser").addClass("d-none");
-          $("#authGuest").removeClass("d-none");
-        });
-
-        // ─── Fecha modal ao clicar fora (Bootstrap já faz isso,
-        //     mas deixamos aqui para customizações futuras) ───────────────
-        $("#modalLogin").on("hidden.bs.modal", function () {
-          // callback pós-close
-        });
-      });
-    </script>
   </body>
 </html>
