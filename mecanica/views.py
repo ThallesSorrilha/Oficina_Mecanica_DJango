@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import CreateView, UpdateView, DeleteView, DetailView
 from django.views.generic.list import ListView
 from django.urls import reverse_lazy
@@ -11,7 +12,7 @@ from .models import (
 from .forms import BaseModelForm
 
 
-class BaseListView(ListView):
+class BaseListView(LoginRequiredMixin, ListView):
     list_columns = []
     detail_url_name = None
     create_url_name = None
@@ -32,7 +33,7 @@ class BaseListView(ListView):
         return ctx
 
 
-class BaseDetailView(DetailView):
+class BaseDetailView(LoginRequiredMixin, DetailView):
     edit_url_name = None
     delete_url_name = None
 
@@ -56,13 +57,13 @@ class BaseDetailView(DetailView):
         return ctx
 
 
-class BaseCreateView(CreateView):
+class BaseCreateView(LoginRequiredMixin, CreateView):
     def get_form_class(self):
         exclude = getattr(self, "exclude_fields", ["id"])
         return modelform_factory(self.model, exclude=exclude, form=BaseModelForm)
 
 
-class BaseUpdateView(UpdateView):
+class BaseUpdateView(LoginRequiredMixin, UpdateView):
     def get_form_class(self):
         exclude = getattr(self, "exclude_fields", ["id"])
         return modelform_factory(self.model, exclude=exclude, form=BaseModelForm)
@@ -84,6 +85,10 @@ class BaseFuncionarioListView(BaseListView):
         ("Horas Sem.", "horas_semanais"),
     ]
 
+
+class BaseDeleteView(LoginRequiredMixin, DeleteView):
+    pass
+
 # =========================
 # Cliente
 # =========================
@@ -104,7 +109,7 @@ class ClienteUpdate(BaseUpdateView):
                      'botao': 'Atualizar Cliente'}
 
 
-class ClienteDelete(DeleteView):
+class ClienteDelete(BaseDeleteView):
     model = Cliente
     template_name = 'mecanica/form.html'
     success_url = reverse_lazy('cliente-list')
@@ -152,7 +157,7 @@ class CarroUpdate(BaseUpdateView):
                      'botao': 'Atualizar Carro'}
 
 
-class CarroDelete(DeleteView):
+class CarroDelete(BaseDeleteView):
     model = Carro
     template_name = 'mecanica/form.html'
     success_url = reverse_lazy('carro-list')
@@ -200,7 +205,7 @@ class ServicoUpdate(BaseUpdateView):
                      'botao': 'Atualizar Serviço'}
 
 
-class ServicoDelete(DeleteView):
+class ServicoDelete(BaseDeleteView):
     model = Servico
     template_name = 'mecanica/form.html'
     success_url = reverse_lazy('servico-list')
@@ -247,7 +252,7 @@ class PecaUpdate(BaseUpdateView):
                      'botao': 'Atualizar Peça'}
 
 
-class PecaDelete(DeleteView):
+class PecaDelete(BaseDeleteView):
     model = Peca
     template_name = 'mecanica/form.html'
     success_url = reverse_lazy('peca-list')
@@ -296,7 +301,7 @@ class MecanicoUpdate(BaseFuncionarioUpdateView):
                      'botao': 'Atualizar Mecânico'}
 
 
-class MecanicoDelete(DeleteView):
+class MecanicoDelete(BaseDeleteView):
     model = Mecanico
     template_name = 'mecanica/form.html'
     success_url = reverse_lazy('mecanico-list')
@@ -339,7 +344,7 @@ class ConsultorTecnicoUpdate(BaseFuncionarioUpdateView):
                      'botao': 'Atualizar Consultor Técnico'}
 
 
-class ConsultorTecnicoDelete(DeleteView):
+class ConsultorTecnicoDelete(BaseDeleteView):
     model = ConsultorTecnico
     template_name = 'mecanica/form.html'
     success_url = reverse_lazy('consultor-tecnico-list')
@@ -383,7 +388,7 @@ class OrdemServicoUpdate(BaseUpdateView):
                      'botao': 'Atualizar Ordem de Serviço'}
 
 
-class OrdemServicoDelete(DeleteView):
+class OrdemServicoDelete(BaseDeleteView):
     model = OrdemServico
     template_name = 'mecanica/form.html'
     success_url = reverse_lazy('ordem-servico-list')
@@ -433,7 +438,7 @@ class OrdemPecasUpdate(BaseUpdateView):
                      'botao': 'Atualizar Ordem de Peças'}
 
 
-class OrdemPecasDelete(DeleteView):
+class OrdemPecasDelete(BaseDeleteView):
     model = OrdemPecas
     template_name = 'mecanica/form.html'
     success_url = reverse_lazy('ordem-pecas-list')

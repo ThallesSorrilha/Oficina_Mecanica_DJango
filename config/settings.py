@@ -168,4 +168,4 @@ CSRF_TRUSTED_ORIGINS = [
 
 LOGIN_URL = 'login'  # URL onde LoginRequiredMixin redireciona
 LOGIN_REDIRECT_URL = 'index'  # URL para redirecionar após login bem-sucedido
-LOGOUT_REDIRECT_URL = 'index'  # URL para redirecionar após logout
+LOGOUT_REDIRECT_URL = 'login'  # URL para redirecionar após logout
