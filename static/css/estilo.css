@@ -115,6 +115,19 @@ h6,
   margin-left: 0.3em;
 }
 
+.navbar .user-menu-toggle {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+.navbar .user-menu-toggle::after {
+  display: none;
+}
+.navbar .user-menu-toggle:focus,
+.navbar .user-menu-toggle:active {
+  box-shadow: none;
+}
+
 /* Dropdown */
 .dropdown-menu {
   background: #112e28;
@@ -185,6 +198,7 @@ h6,
   color: #fff;
   cursor: pointer;
   border: none;
+  flex: 0 0 auto;
 }
 
 /* Hamburguer */
