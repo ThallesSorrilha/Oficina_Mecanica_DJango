@@ -59,12 +59,7 @@
         <!-- Links centralizados -->
         <div class="collapse navbar-collapse" id="navbarMain">
           <ul class="navbar-nav mx-auto gap-1">
-            <li class="nav-item">
-              <a class="nav-link active" href="{% url 'index' %}">
-                <i class="bi bi-speedometer2 me-1"></i>Painel
-              </a>
-            </li>
-
+            
             <li class="nav-item dropdown">
               <a
                 class="nav-link dropdown-toggle"
@@ -236,9 +231,10 @@
           <ul
             class="navbar-nav ms-lg-auto gap-1 align-items-lg-center mt-3 mt-lg-0"
           >
+            {% if user.is_authenticated %}
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'sobre' %}">
-                <i class="bi bi-info-circle me-1"></i>Sobre
+              <a class="nav-link" href="{% url 'index' %}">
+                <i class="bi bi-speedometer2 me-1"></i>Painel
               </a>
             </li>
 
@@ -249,7 +245,11 @@
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
               >
-                <span class="avatar-btn">JP</span>
+                <span
+                  class="avatar-btn d-inline-flex align-items-center justify-content-center"
+                >
+                  <i class="bi bi-person-circle" aria-hidden="true"></i>
+                </span>
                 <span class="visually-hidden">Menu do usuário</span>
               </button>
               <ul class="dropdown-menu dropdown-menu-end">
@@ -264,6 +264,13 @@
                 </li>
               </ul>
             </li>
+            {% else %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'sobre' %}">
+                <i class="bi bi-info-circle me-1"></i>Sobre
+              </a>
+            </li>
+            {% endif %}
           </ul>
         </div>
       </div>
