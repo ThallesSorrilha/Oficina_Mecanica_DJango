@@ -3,10 +3,37 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Sum
+from django.utils import timezone
+
+from mecanica.models import OrdemServico
 
 
 class IndexView(LoginRequiredMixin, TemplateView):
     template_name = "website/index.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        chamados = OrdemServico.objects.select_related(
+            "carro", "carro__cliente"
+        ).prefetch_related("servicos")
+
+        context["chamados"] = chamados[:8]
+        context["chamados_abertos"] = chamados.exclude(
+            estado__iexact="concluído"
+        ).count()
+        context["chamados_concluidos"] = chamados.filter(
+            estado__iexact="concluído"
+        ).count()
+        context["veiculos_ativos"] = OrdemServico.objects.values(
+            "carro_id"
+        ).distinct().count()
+        hoje = timezone.localdate()
+        context["faturamento_mes"] = OrdemServico.objects.filter(
+            data_inicio__year=hoje.year,
+            data_inicio__month=hoje.month,
+        ).aggregate(total=Sum("preco"))["total"] or 0
+        return context
 
 
 class ContatoView(TemplateView):
