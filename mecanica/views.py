@@ -13,6 +13,7 @@ from .forms import BaseModelForm
 
 
 class BaseListView(LoginRequiredMixin, ListView):
+    paginate_by = 3
     list_columns = []
     detail_url_name = None
     create_url_name = None
