@@ -34,7 +34,7 @@ class Carro(models.Model):
 
 class Servico(models.Model):
     nome = models.CharField(max_length=60)
-    descricao = models.CharField(max_length=200, null=True)
+    descricao = models.CharField(max_length=200, null=True, blank=True)
     preco = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self):
@@ -48,7 +48,7 @@ class Peca(models.Model):
     nome = models.CharField(max_length=40)
     fabricante = models.CharField(max_length=30)
     codigo = models.CharField(max_length=60)
-    descricao = models.CharField(max_length=100, null=True)
+    descricao = models.CharField(max_length=100, null=True, blank=True)
     preco = models.DecimalField(max_digits=10, decimal_places=2)
     estoque = models.PositiveIntegerField()
 
@@ -94,10 +94,10 @@ class OrdemServico(models.Model):
     estado = models.CharField(max_length=20)
     preco = models.DecimalField(max_digits=10, decimal_places=2)
     data_inicio = models.DateTimeField(auto_now_add=True)
-    previsao_termino = models.DateTimeField(null=True)
-    data_termino = models.DateTimeField(null=True)
-    descricao = models.CharField(max_length=100, null=True)
-    observacao = models.CharField(max_length=200, null=True)
+    previsao_termino = models.DateTimeField(null=True, blank=True)
+    data_termino = models.DateTimeField(null=True, blank=True)
+    descricao = models.CharField(max_length=100, null=True, blank=True)
+    observacao = models.CharField(max_length=200, null=True, blank=True)
     carro = models.ForeignKey(Carro, on_delete=models.PROTECT)
     consultor_tecnico = models.ForeignKey(
         ConsultorTecnico, on_delete=models.PROTECT)
