@@ -1,5 +1,5 @@
-{% extends "website/modelo.html" %} {% block hero %} {% endblock hero %}
-{%block conteudo %}
+{% extends "website/modelo.html" %} {% block hero %} {% endblock hero %} {%block
+conteudo %}
 <section class="py-5 py-lg-6 bg-surface">
   <div class="container">
     <div class="row justify-content-center">
@@ -48,6 +48,41 @@
                     <th class="ps-4 text-muted text-uppercase small">ID</th>
                     <td class="pe-4">{{ object.pk }}</td>
                   </tr>
+                  {% if servico_items is not None %}
+                  <tr>
+                    <th class="ps-4 text-muted text-uppercase small">
+                      Serviços
+                    </th>
+                    <td class="pe-4">
+                      {% for item in servico_items %}
+                      <div>
+                        {{ item.servico.nome }} - R$ {{
+                        item.preco_unitario|floatformat:2 }}
+                      </div>
+                      {% empty %}
+                      <span class="text-muted">Nenhum serviço associado.</span>
+                      {% endfor %}
+                    </td>
+                  </tr>
+                  <tr>
+                    <th class="ps-4 text-muted text-uppercase small">Peças</th>
+                    <td class="pe-4">
+                      {% for item in peca_items %}
+                      <div>
+                        {{ item.peca.nome }} ({{ item.quantidade }} x R$ {{
+                        item.preco_unitario|floatformat:2 }}) = R$ {{
+                        item.subtotal|floatformat:2 }}
+                      </div>
+                      {% empty %}
+                      <span class="text-muted">Nenhuma peça associada.</span>
+                      {% endfor %}
+                    </td>
+                  </tr>
+                  <tr>
+                    <th class="ps-4 text-muted text-uppercase small">Total</th>
+                    <td class="pe-4 fw-bold">R$ {{ total|floatformat:2 }}</td>
+                  </tr>
+                  {% endif %}
                 </tbody>
               </table>
             </div>

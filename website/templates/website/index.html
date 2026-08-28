@@ -486,10 +486,12 @@
                           >
                         </td>
                         <td>
-                          {% for servico in chamado.servicos.all %} {{
-                          servico.nome }}{% if not forloop.last %}, {% endif %}
-                          {% empty %}
-                          <span class="text-muted">Sem serviço informado</span>
+                          {% for item in chamado.ordem_servico_servicos.all %}
+                            {{ item.servico.nome }}
+                            {% if not forloop.last %},
+                            {%endif %}
+                            {% empty %}
+                            <span class="text-muted">Sem serviço informado</span>
                           {% endfor %}
                         </td>
                         <td>
@@ -501,7 +503,7 @@
                         </td>
                         <td>
                           <span class="fw-semibold"
-                            >R$ {{ chamado.preco|floatformat:2 }}</span
+                            >R$ {{ chamado.total|floatformat:2 }}</span
                           >
                         </td>
                         <td>

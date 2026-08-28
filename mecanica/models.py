@@ -92,7 +92,6 @@ class ConsultorTecnico(Funcionario):
 
 class OrdemServico(models.Model):
     estado = models.CharField(max_length=20)
-    preco = models.DecimalField(max_digits=10, decimal_places=2)
     data_inicio = models.DateTimeField(auto_now_add=True)
     previsao_termino = models.DateTimeField(null=True, blank=True)
     data_termino = models.DateTimeField(null=True, blank=True)
@@ -102,7 +101,19 @@ class OrdemServico(models.Model):
     consultor_tecnico = models.ForeignKey(
         ConsultorTecnico, on_delete=models.PROTECT)
     mecanicos = models.ManyToManyField(Mecanico)
-    servicos = models.ManyToManyField(Servico)
+    servicos = models.ManyToManyField(Servico, through='OrdemServicoServico')
+
+    @property
+    def total(self):
+        total_servicos = sum(
+            (item.preco_unitario for item in self.ordem_servico_servicos.all()),
+            0,
+        )
+        total_pecas = sum(
+            (item.subtotal for item in self.ordem_pecas.all()),
+            0,
+        )
+        return total_servicos + total_pecas
 
     def __str__(self):
         return f"{self.carro.modelo} - {self.carro.cor} - {self.estado} - {self.data_inicio}"
@@ -114,9 +125,17 @@ class OrdemServico(models.Model):
 
 class OrdemPecas(models.Model):
     peca = models.ForeignKey(Peca, on_delete=models.PROTECT)
-    ordem_servico = models.ForeignKey(OrdemServico, on_delete=models.PROTECT)
+    ordem_servico = models.ForeignKey(
+        OrdemServico,
+        on_delete=models.PROTECT,
+        related_name='ordem_pecas',
+    )
     quantidade = models.PositiveIntegerField()
-    preco = models.DecimalField(max_digits=10, decimal_places=2)
+    preco_unitario = models.DecimalField(max_digits=10, decimal_places=2)
+
+    @property
+    def subtotal(self):
+        return self.preco_unitario * self.quantidade
 
     def __str__(self):
         return f"({self.peca.nome} - {self.ordem_servico.carro.vin} - {self.quantidade})"
@@ -124,3 +143,30 @@ class OrdemPecas(models.Model):
     class Meta:
         verbose_name_plural = "OrdensPecas"
         ordering = ['ordem_servico']
+        constraints = [
+            models.UniqueConstraint(
+                fields=['ordem_servico', 'peca'],
+                name='unique_peca_por_ordem',
+            ),
+        ]
+
+
+class OrdemServicoServico(models.Model):
+    ordem_servico = models.ForeignKey(
+        OrdemServico,
+        on_delete=models.CASCADE,
+        related_name='ordem_servico_servicos',
+    )
+    servico = models.ForeignKey(Servico, on_delete=models.PROTECT)
+    preco_unitario = models.DecimalField(max_digits=10, decimal_places=2)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['ordem_servico', 'servico'],
+                name='unique_servico_por_ordem',
+            ),
+        ]
+
+    def __str__(self):
+        return f"{self.ordem_servico_id} - {self.servico.nome}"

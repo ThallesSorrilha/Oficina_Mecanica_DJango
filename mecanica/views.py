@@ -9,7 +9,7 @@ from .models import (
     ConsultorTecnico, OrdemServico, OrdemPecas
 )
 
-from .forms import BaseModelForm
+from .forms import BaseModelForm, OrdemPecasForm, OrdemServicoForm, OrdemServicoServicoForm
 
 
 class BaseListView(LoginRequiredMixin, ListView):
@@ -55,17 +55,29 @@ class BaseDetailView(LoginRequiredMixin, DetailView):
         ]
         ctx["edit_url_name"] = self.edit_url_name
         ctx["delete_url_name"] = self.delete_url_name
+        if self.model is OrdemServico:
+            ctx["servico_items"] = ctx["object"].ordem_servico_servicos.select_related(
+                "servico"
+            )
+            ctx["peca_items"] = ctx["object"].ordem_pecas.select_related(
+                "peca"
+            )
+            ctx["total"] = ctx["object"].total
         return ctx
 
 
 class BaseCreateView(LoginRequiredMixin, CreateView):
     def get_form_class(self):
+        if self.form_class is not None:
+            return self.form_class
         exclude = getattr(self, "exclude_fields", ["id"])
         return modelform_factory(self.model, exclude=exclude, form=BaseModelForm)
 
 
 class BaseUpdateView(LoginRequiredMixin, UpdateView):
     def get_form_class(self):
+        if self.form_class is not None:
+            return self.form_class
         exclude = getattr(self, "exclude_fields", ["id"])
         return modelform_factory(self.model, exclude=exclude, form=BaseModelForm)
 
@@ -375,6 +387,7 @@ class ConsultorTecnicoDetail(BaseDetailView):
 # =========================
 class OrdemServicoCreate(BaseCreateView):
     model = OrdemServico
+    form_class = OrdemServicoForm
     template_name = 'mecanica/form.html'
     success_url = reverse_lazy('ordem-servico-list')
     extra_context = {'titulo': 'Cadastro de Ordem de Serviço',
@@ -383,6 +396,7 @@ class OrdemServicoCreate(BaseCreateView):
 
 class OrdemServicoUpdate(BaseUpdateView):
     model = OrdemServico
+    form_class = OrdemServicoForm
     template_name = 'mecanica/form.html'
     success_url = reverse_lazy('ordem-servico-list')
     extra_context = {'titulo': 'Editar dados da Ordem de Serviço',
@@ -406,7 +420,7 @@ class OrdemServicoList(BaseListView):
     create_url_name = 'ordem-servico-create'
     list_columns = [
         ("Estado", "estado"),
-        ("Preco", "preco"),
+        ("Total", "total"),
         ("Consultor Técnico", "consultor_tecnico"),
         ("Data Término", "data_termino"),
     ]
@@ -425,6 +439,7 @@ class OrdemServicoDetail(BaseDetailView):
 # =========================
 class OrdemPecasCreate(BaseCreateView):
     model = OrdemPecas
+    form_class = OrdemPecasForm
     template_name = 'mecanica/form.html'
     success_url = reverse_lazy('ordem-pecas-list')
     extra_context = {'titulo': 'Cadastro de Ordem de Peças',
@@ -433,6 +448,7 @@ class OrdemPecasCreate(BaseCreateView):
 
 class OrdemPecasUpdate(BaseUpdateView):
     model = OrdemPecas
+    form_class = OrdemPecasForm
     template_name = 'mecanica/form.html'
     success_url = reverse_lazy('ordem-pecas-list')
     extra_context = {'titulo': 'Editar dados da Ordem de Peças',
@@ -458,7 +474,7 @@ class OrdemPecasList(BaseListView):
         ("Peça", "peca"),
         ("Ordem Serviço", "ordem_servico"),
         ("Quantidade", "quantidade"),
-        ("Preço", "preco"),
+        ("Preço Unitário", "preco_unitario"),
     ]
 
 

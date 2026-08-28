@@ -41,16 +41,15 @@ Cliente "1" -- "0..n" Carro
 
 class OrdemServico {
   + estado: String
-  + preco: double
   + data_inicio: DateTime
   + previsao_termino: DateTime
-  + conclusao: DateTime
+  + data_termino: DateTime
   + descricao: String
   + observacao: String
   + carro: Carro
   + mecanicos: List<Mecanicos>
   + consultor_tecnico: ConsultorTecnico
-  + servicos: List<Servico>
+  + total: Decimal
 }
 
 ' Associações da Ordem de Serviço
@@ -58,13 +57,16 @@ Carro "1" -- "0..n" OrdemServico
 Mecanico "1..n" -- "0..n" OrdemServico
 ConsultorTecnico "1" -- "0..n" OrdemServico
 
-class ItensPeca {
+class OrdemPecas {
+  + ordem_servico: OrdemServico
   + peca: Peca
   + quantidade: int
-  + valor: double
+  + preco_unitario: Decimal
+  + subtotal: Decimal
 }
 
 class Peca {
+  + nome: String
   + fabricante: String
   + codigo: String
   + descricao: String
@@ -72,8 +74,8 @@ class Peca {
   + estoque: int
 }
 
-OrdemServico "1" -- "0..n" ItensPeca
-ItensPeca "0..n" -- "1" Peca
+OrdemServico "1" -- "0..n" OrdemPecas
+OrdemPecas "0..n" -- "1" Peca
 
 class Servico {
   + nome: String
@@ -81,6 +83,18 @@ class Servico {
   + preco: Decimal
 }
 
-OrdemServico "0..n" -- "1..n" Servico
+class OrdemServicoServico {
+  + ordem_servico: OrdemServico
+  + servico: Servico
+  + preco_unitario: Decimal
+}
+
+OrdemServico "1" -- "0..n" OrdemServicoServico
+OrdemServicoServico "0..n" -- "1" Servico
+
+note right of OrdemServico
+  total = soma dos precos dos servicos
+  + soma(preco_unitario da peca * quantidade)
+end note
 
 @enduml

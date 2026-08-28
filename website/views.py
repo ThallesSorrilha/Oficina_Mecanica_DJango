@@ -3,7 +3,6 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Sum
 from django.utils import timezone
 
 from mecanica.models import OrdemServico
@@ -16,7 +15,10 @@ class IndexView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         chamados = OrdemServico.objects.select_related(
             "carro", "carro__cliente"
-        ).prefetch_related("servicos")
+        ).prefetch_related(
+            "ordem_servico_servicos__servico",
+            "ordem_pecas__peca",
+        )
 
         context["chamados"] = chamados[:8]
         context["chamados_abertos"] = chamados.exclude(
@@ -29,10 +31,14 @@ class IndexView(LoginRequiredMixin, TemplateView):
             "carro_id"
         ).distinct().count()
         hoje = timezone.localdate()
-        context["faturamento_mes"] = OrdemServico.objects.filter(
+        ordens_do_mes = OrdemServico.objects.filter(
             data_inicio__year=hoje.year,
             data_inicio__month=hoje.month,
-        ).aggregate(total=Sum("preco"))["total"] or 0
+        )
+        context["faturamento_mes"] = sum(
+            (ordem.total for ordem in ordens_do_mes),
+            0,
+        )
         return context
 
 
