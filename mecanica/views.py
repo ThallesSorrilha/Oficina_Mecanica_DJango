@@ -16,6 +16,7 @@ class BaseListView(LoginRequiredMixin, ListView):
     paginate_by = 3
     list_columns = []
     detail_url_name = None
+    update_url_name = None
     create_url_name = None
 
     def get_context_data(self, **kwargs):
@@ -23,6 +24,7 @@ class BaseListView(LoginRequiredMixin, ListView):
         columns = self.list_columns or [("Descricao", None)]
         ctx["columns"] = columns
         ctx["detail_url_name"] = self.detail_url_name
+        ctx["update_url_name"] = self.update_url_name
         ctx["create_url_name"] = self.create_url_name
         ctx["rows"] = [
             {
@@ -135,6 +137,7 @@ class ClienteList(BaseListView):
     extra_context = {'titulo': 'Lista de Clientes',
                      'cadastro': '+ Adicionar Cliente'}
     detail_url_name = 'cliente-detail'
+    update_url_name = 'cliente-update'
     create_url_name = 'cliente-create'
     list_columns = [
         ("Nome", "nome"),
@@ -183,6 +186,7 @@ class CarroList(BaseListView):
     extra_context = {'titulo': 'Lista de Carros',
                      'cadastro': '+ Adicionar Carro'}
     detail_url_name = 'carro-detail'
+    update_url_name = 'carro-update'
     create_url_name = 'carro-create'
     list_columns = [
         ("Modelo", "modelo"),
@@ -231,6 +235,7 @@ class ServicoList(BaseListView):
     extra_context = {'titulo': 'Lista de Serviços',
                      'cadastro': '+ Adicionar Serviço'}
     detail_url_name = 'servico-detail'
+    update_url_name = 'servico-update'
     create_url_name = 'servico-create'
     list_columns = [
         ("Nome", "nome"),
@@ -278,6 +283,7 @@ class PecaList(BaseListView):
     extra_context = {'titulo': 'Lista de Peças',
                      'cadastro': '+ Adicionar Peça'}
     detail_url_name = 'peca-detail'
+    update_url_name = 'peca-update'
     create_url_name = 'peca-create'
     list_columns = [
         ("Nome", "nome"),
@@ -327,6 +333,7 @@ class MecanicoList(BaseFuncionarioListView):
     extra_context = {'titulo': 'Lista de Mecânicos',
                      'cadastro': '+ Adicionar Mecânico'}
     detail_url_name = 'mecanico-detail'
+    update_url_name = 'mecanico-update'
     create_url_name = 'mecanico-create'
 
 
@@ -371,6 +378,7 @@ class ConsultorTecnicoList(BaseFuncionarioListView):
     extra_context = {'titulo': 'Lista de Consultores Técnicos',
                      'cadastro': '+ Adicionar Consultor Técnico'}
     detail_url_name = 'consultor-tecnico-detail'
+    update_url_name = 'consultor-tecnico-update'
     create_url_name = 'consultor-tecnico-create'
 
 
@@ -417,6 +425,7 @@ class OrdemServicoList(BaseListView):
     extra_context = {'titulo': 'Lista de Ordens de Serviço',
                      'cadastro': '+ Adicionar Ordem de Serviço'}
     detail_url_name = 'ordem-servico-detail'
+    update_url_name = 'ordem-servico-update'
     create_url_name = 'ordem-servico-create'
     list_columns = [
         ("Estado", "estado"),
@@ -469,6 +478,7 @@ class OrdemPecasList(BaseListView):
     extra_context = {'titulo': 'Lista de Ordens de Peças',
                      'cadastro': '+ Adicionar Ordem de Peças'}
     detail_url_name = 'ordem-pecas-detail'
+    update_url_name = 'ordem-pecas-update'
     create_url_name = 'ordem-pecas-create'
     list_columns = [
         ("Peça", "peca"),

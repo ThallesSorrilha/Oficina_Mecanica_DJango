@@ -1,6 +1,5 @@
 {% extends "website/modelo.html" %}
-{% block hero %}
-{% endblock hero %}
+{% block hero %} {% endblock hero %}
 {%block conteudo %}
 <section class="py-5 py-lg-6 bg-surface">
   <div class="container">
@@ -32,7 +31,7 @@
                 </th>
                 {% endfor %}
                 <th class="text-end pe-4">ID</th>
-                {% if detail_url_name %}
+                {% if detail_url_name or update_url_name %}
                 <th class="text-end"></th>
                 {% endif %}
               </tr>
@@ -46,8 +45,19 @@
                 </td>
                 {% endfor %}
                 <td class="text-end pe-4">{{ row.pk }}</td>
-                {% if detail_url_name %}
+                {% if detail_url_name or update_url_name %}
                 <td class="text-end">
+                  {% if update_url_name %}
+                  <a
+                    class="btn btn-sm btn-outline-secondary"
+                    href="{% url update_url_name row.pk %}"
+                    aria-label="Editar registro"
+                    title="Editar"
+                  >
+                    <i class="bi bi-pencil"></i>
+                    <span class="visually-hidden">Editar</span>
+                  </a>
+                  {% endif %} {% if detail_url_name %}
                   <a
                     class="btn btn-sm btn-outline-primary"
                     href="{% url detail_url_name row.pk %}"
@@ -57,13 +67,14 @@
                     <i class="bi bi-eye"></i>
                     <span class="visually-hidden">Visualizar</span>
                   </a>
+                  {% endif %}
                 </td>
                 {% endif %}
               </tr>
               {% empty %}
               <tr>
                 <td
-                  colspan="{% if detail_url_name %}{{ columns|length|add:2 }}{% else %}{{ columns|length|add:1 }}{% endif %}"
+                  colspan="{% if detail_url_name or update_url_name %}{{ columns|length|add:2 }}{% else %}{{ columns|length|add:1 }}{% endif %}"
                   class="text-center text-muted py-5"
                 >
                   Nenhum registro encontrado.

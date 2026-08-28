@@ -303,9 +303,12 @@
                 só lugar. Eficiência no garante da sua oficina.
               </p>
               <div class="d-flex gap-2 flex-wrap">
-                <button class="btn btn-auth px-4 py-2">
+                <a
+                  class="btn btn-auth px-4 py-2"
+                  href="{% url 'ordem-servico-create' %}"
+                >
                   <i class="bi bi-plus-circle me-2"></i>Nova Ordem
-                </button>
+                </a>
                 <button class="btn btn-outline-light btn-sm px-3">
                   <i class="bi bi-play-circle me-1"></i>Ver Tutorial
                 </button>
