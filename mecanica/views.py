@@ -13,7 +13,7 @@ from .forms import BaseModelForm, OrdemPecasForm, OrdemServicoForm, OrdemServico
 
 
 class BaseListView(LoginRequiredMixin, ListView):
-    paginate_by = 3
+    paginate_by = 15
     list_columns = []
     detail_url_name = None
     update_url_name = None
