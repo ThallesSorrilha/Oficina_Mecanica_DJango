@@ -2,9 +2,16 @@ from decimal import Decimal
 
 from django.core.cache import cache
 from django.db import models
+from django.core.exceptions import ValidationError
 
 
 class ConfiguracaoIA(models.Model):
+    MODO_API_KEY = "api_key"
+    MODO_ENTERPRISE = "enterprise"
+    MODOS_ACESSO = (
+        (MODO_API_KEY, "API Key (Google AI Studio)"),
+        (MODO_ENTERPRISE, "Enterprise (Vertex AI / Google Cloud)"),
+    )
     PROVEDOR_GEMINI = "gemini"
     PROVEDOR_FALSO = "falso"
     PROVEDORES = (
@@ -23,6 +30,31 @@ class ConfiguracaoIA(models.Model):
         choices=PROVEDORES,
         default=PROVEDOR_GEMINI,
         help_text="Provedor usado para gerar respostas.",
+    )
+    modo_acesso = models.CharField(
+        "modo de acesso",
+        max_length=20,
+        choices=MODOS_ACESSO,
+        default=MODO_API_KEY,
+        help_text="Modo usado para acessar o Gemini.",
+    )
+    api_key = models.CharField(
+        "Chave da API",
+        max_length=200,
+        blank=True,
+        help_text="Só é usada quando o modo de acesso for API Key. Gere em aistudio.google.com.",
+    )
+    projeto_gcp = models.CharField(
+        "ID do projeto no Google Cloud",
+        max_length=100,
+        blank=True,
+        help_text="Só é usado quando o modo de acesso for Enterprise.",
+    )
+    regiao = models.CharField(
+        "região",
+        max_length=50,
+        default="global",
+        help_text="Só é usada no modo Enterprise. Use global, salvo se o professor indicar outra.",
     )
     modelo = models.CharField(
         "modelo",
@@ -122,6 +154,28 @@ class ConfiguracaoIA(models.Model):
     class Meta:
         verbose_name = "configuração de IA"
         verbose_name_plural = "configurações de IA"
+
+    def __str__(self):
+        return f"Configuração de IA ({self.get_provedor_display()})"
+
+    def __repr__(self):
+        return (
+            f"<ConfiguracaoIA pk={self.pk!r} provedor={self.provedor!r} "
+            f"modelo={self.modelo!r}>"
+        )
+
+    def clean(self):
+        super().clean()
+        if self.provedor != self.PROVEDOR_GEMINI:
+            return
+        if self.modo_acesso == self.MODO_API_KEY and not self.api_key:
+            raise ValidationError({
+                "api_key": "Preencha a Chave da API na tela Configuração da IA, ou mude o modo de acesso para Enterprise."
+            })
+        if self.modo_acesso == self.MODO_ENTERPRISE and not self.projeto_gcp:
+            raise ValidationError({
+                "projeto_gcp": "Preencha o ID do projeto no Google Cloud na tela Configuração da IA."
+            })
 
     @classmethod
     def obter(cls):

@@ -3,6 +3,7 @@ import socket
 from google import genai
 from google.genai import types
 from google.genai.errors import APIError
+from google.auth.exceptions import DefaultCredentialsError
 
 from .base import (
     BloqueioSeguranca,
@@ -40,15 +41,33 @@ def _texto_erro(exc):
 
 
 class ProvedorGemini(ProvedorIA):
-    def __init__(self, config, chave):
-        super().__init__(config, chave)
+    def __init__(self, config):
+        super().__init__(config)
         try:
-            self.cliente = genai.Client(
-                api_key=chave,
-                http_options=types.HttpOptions(timeout=config.timeout_s * 1000),
-            )
+            opcoes = {"http_options": types.HttpOptions(timeout=config.timeout_s * 1000)}
+            if config.modo_acesso == "enterprise":
+                opcoes.update(
+                    enterprise=True,
+                    project=config.projeto_gcp,
+                    location=config.regiao,
+                )
+            else:
+                opcoes["api_key"] = config.api_key
+            try:
+                self.cliente = genai.Client(**opcoes)
+            except TypeError:
+                if config.modo_acesso != "enterprise":
+                    raise
+                opcoes.pop("enterprise")
+                opcoes["vertexai"] = True
+                self.cliente = genai.Client(**opcoes)
         except (TimeoutError, socket.timeout) as exc:
             raise TempoEsgotado(str(exc), modelo=config.modelo) from exc
+        except DefaultCredentialsError as exc:
+            raise ErroConfiguracao(
+                "Não foi possível obter as credenciais do Enterprise.",
+                modelo=config.modelo,
+            ) from exc
         except Exception as exc:
             raise ErroTemporario(
                 f"Não foi possível conectar ao Gemini: {_texto_erro(exc)}",
@@ -117,24 +136,28 @@ class ProvedorGemini(ProvedorIA):
                 modelo=self.config.modelo,
             )
         if motivo == "MAX_TOKENS":
-            raise RespostaInvalida(
+            erro = RespostaInvalida(
                 "A resposta atingiu o limite máximo de tokens.",
                 uso=uso,
                 texto_bruto=texto,
                 modelo=self.config.modelo,
             )
+            erro.motivo_fim = motivo
+            raise erro
 
         dados = None
         if pedido.esquema is not None:
             try:
                 dados = pedido.esquema.model_validate_json(texto)
             except Exception as exc:
-                raise RespostaInvalida(
+                erro = RespostaInvalida(
                     f"A resposta não corresponde ao esquema: {_texto_erro(exc)}",
                     uso=uso,
                     texto_bruto=texto,
                     modelo=self.config.modelo,
-                ) from exc
+                )
+                erro.motivo_fim = motivo
+                raise erro from exc
 
         return RespostaIA(
             texto=texto,

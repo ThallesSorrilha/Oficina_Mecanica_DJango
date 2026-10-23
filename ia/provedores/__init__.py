@@ -1,5 +1,4 @@
 import importlib
-import os
 from threading import Lock
 
 from .base import ErroConfiguracao, ProvedorIA
@@ -22,11 +21,15 @@ def obter_provedor(config):
             f"Provedor de IA desconhecido: {config.provedor}."
         ) from exc
 
-    chave = os.getenv("GEMINI_API_KEY", "")
-    if config.provedor == "gemini" and not chave:
-        raise ErroConfiguracao(
-            "GEMINI_API_KEY não foi definida no ambiente ou no arquivo .env."
-        )
+    if config.provedor == "gemini":
+        if config.modo_acesso == "api_key" and not config.api_key:
+            raise ErroConfiguracao(
+                "Preencha a Chave da API na tela Configuração da IA, ou mude o modo de acesso para Enterprise."
+            )
+        if config.modo_acesso == "enterprise" and not config.projeto_gcp:
+            raise ErroConfiguracao(
+                "Preencha o ID do projeto no Google Cloud na tela Configuração da IA."
+            )
 
     cache_key = (config.provedor, config.atualizado_em)
     with _lock:
@@ -34,6 +37,6 @@ def obter_provedor(config):
         if provedor is None:
             modulo_nome, classe_nome = caminho.rsplit(".", 1)
             classe = getattr(importlib.import_module(modulo_nome), classe_nome)
-            provedor = classe(config=config, chave=chave)
+            provedor = classe(config=config)
             _provedores[cache_key] = provedor
         return provedor

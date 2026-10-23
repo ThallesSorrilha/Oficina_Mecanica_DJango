@@ -4,8 +4,8 @@ from .base import PedidoIA, ProvedorIA, RespostaIA, UsoTokens
 
 
 class ProvedorFalso(ProvedorIA):
-    def __init__(self, config, chave=""):
-        super().__init__(config, chave)
+    def __init__(self, config):
+        super().__init__(config)
         self.pedidos = []
         self._respostas = deque()
 

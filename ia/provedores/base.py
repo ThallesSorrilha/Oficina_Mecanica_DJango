@@ -50,6 +50,8 @@ class RespostaIA:
 class ErroIA(Exception):
     situacao = "erro_ia"
 
+    situacao = "erro_ia"
+
     def __init__(
         self,
         mensagem="",
@@ -93,9 +95,8 @@ class IaIndisponivel(ErroIA):
 
 
 class ProvedorIA(ABC):
-    def __init__(self, config, chave):
+    def __init__(self, config):
         self.config = config
-        self.chave = chave
 
     @abstractmethod
     def gerar(self, pedido: PedidoIA) -> RespostaIA:
