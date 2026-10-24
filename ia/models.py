@@ -3,6 +3,9 @@ from decimal import Decimal
 from django.core.cache import cache
 from django.db import models
 from django.core.exceptions import ValidationError
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
+from django.conf import settings
 
 
 class ConfiguracaoIA(models.Model):
@@ -220,3 +223,107 @@ class ConfiguracaoIAUsuario(models.Model):
     class Meta:
         verbose_name = "configuração de IA do usuário"
         verbose_name_plural = "configurações de IA dos usuários"
+
+
+class RequisicaoIA(models.Model):
+    SITUACOES = (
+        ("sucesso", "Sucesso"),
+        ("resposta_invalida", "Resposta inválida"),
+        ("erro_temporario", "Erro temporário"),
+        ("erro_permanente", "Erro permanente"),
+        ("tempo_esgotado", "Tempo esgotado"),
+        ("bloqueada_cota", "Bloqueada por cota"),
+        ("bloqueada_seguranca", "Bloqueada por segurança"),
+        ("indisponivel", "Indisponível"),
+        ("erro_configuracao", "Erro de configuração"),
+    )
+    ORIGENS = (
+        ("site", "Site"),
+        ("telegram", "Telegram"),
+        ("comando", "Comando"),
+    )
+    usuario = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.PROTECT,
+        verbose_name="usuário",
+    )
+    referencia_tipo = models.ForeignKey(
+        ContentType,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name="tipo da referência",
+    )
+    referencia_id = models.PositiveBigIntegerField(
+        null=True,
+        blank=True,
+        verbose_name="ID da referência",
+    )
+    referencia = GenericForeignKey("referencia_tipo", "referencia_id")
+    origem = models.CharField(
+        "origem",
+        max_length=20,
+        choices=ORIGENS,
+        default="site",
+    )
+    finalidade = models.CharField("finalidade", max_length=100, db_index=True)
+    provedor = models.CharField("provedor", max_length=20, blank=True)
+    modelo = models.CharField("modelo", max_length=100, blank=True)
+    versao_prompt = models.CharField("versão do prompt", max_length=100, blank=True)
+    tentativa = models.PositiveSmallIntegerField("tentativa", default=1)
+    situacao = models.CharField("situação", max_length=30, choices=SITUACOES)
+    tokens_entrada = models.PositiveBigIntegerField("tokens de entrada", default=0)
+    tokens_saida = models.PositiveBigIntegerField("tokens de saída", default=0)
+    tokens_raciocinio = models.PositiveBigIntegerField("tokens de raciocínio", default=0)
+    tokens_total = models.PositiveBigIntegerField("tokens totais", default=0)
+    custo_estimado = models.DecimalField(
+        "custo estimado",
+        max_digits=14,
+        decimal_places=8,
+        default=Decimal("0"),
+    )
+    duracao_ms = models.PositiveBigIntegerField("duração em milissegundos", default=0)
+    motivo_fim = models.CharField("motivo do fim", max_length=100, blank=True)
+    arquivo_mime = models.CharField("MIME do arquivo", max_length=100, blank=True)
+    arquivo_tamanho = models.PositiveBigIntegerField("tamanho do arquivo", default=0)
+    arquivo_hash = models.CharField("hash do arquivo", max_length=64, blank=True)
+    resposta = models.TextField("resposta", blank=True)
+    erro = models.TextField("erro", blank=True)
+    contexto_hash = models.CharField("hash do contexto", max_length=64, blank=True)
+    criado_em = models.DateTimeField("criado em", auto_now_add=True)
+
+    class Meta:
+        verbose_name = "requisição de IA"
+        verbose_name_plural = "requisições de IA"
+        indexes = [
+            models.Index(fields=["usuario", "-criado_em"]),
+            models.Index(fields=["situacao", "-criado_em"]),
+            models.Index(fields=["referencia_tipo", "referencia_id", "-criado_em"]),
+        ]
+
+
+class ConsumoIA(models.Model):
+    dono = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.PROTECT,
+        related_name="consumos_ia",
+        verbose_name="dono da cota",
+    )
+    mes = models.DateField("mês")
+    tokens_entrada = models.PositiveBigIntegerField("tokens de entrada", default=0)
+    tokens_saida = models.PositiveBigIntegerField("tokens de saída", default=0)
+    tokens_total = models.PositiveBigIntegerField("tokens totais", default=0)
+    custo_estimado = models.DecimalField(
+        "custo estimado",
+        max_digits=14,
+        decimal_places=8,
+        default=Decimal("0"),
+    )
+    requisicoes = models.PositiveIntegerField("requisições", default=0)
+
+    class Meta:
+        verbose_name = "consumo de IA"
+        verbose_name_plural = "consumos de IA"
+        constraints = [
+            models.UniqueConstraint(fields=["dono", "mes"], name="ia_consumo_dono_mes"),
+        ]

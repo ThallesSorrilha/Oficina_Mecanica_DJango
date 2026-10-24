@@ -50,8 +50,6 @@ class RespostaIA:
 class ErroIA(Exception):
     situacao = "erro_ia"
 
-    situacao = "erro_ia"
-
     def __init__(
         self,
         mensagem="",
