@@ -8,7 +8,7 @@ from django.test import TestCase
 from ia.chamada import chamar_ia
 from ia.cota import CotaExcedida, mes_atual, situacao_da_cota
 from ia.models import ConfiguracaoIA, ConfiguracaoIAUsuario, ConsumoIA, RequisicaoIA
-from ia.provedores.base import ErroConfiguracao, ErroTemporario, UsoTokens
+from ia.provedores.base import ErroConfiguracao, ErroTemporario, PedidoIA, UsoTokens
 from ia.provedores.falso import ProvedorFalso
 
 
@@ -160,3 +160,56 @@ class ChamadaTests(TestCase):
             ConsumoIA.objects.get(dono=self.usuario, mes=mes_atual()).tokens_total,
             1,
         )
+
+
+class FluxoExemploChamadaIATests(TestCase):
+    def setUp(self):
+        cache.clear()
+        self.usuario = get_user_model().objects.create_user(
+            username="usuario-fluxo",
+        )
+        self.config = ConfiguracaoIA.objects.create(
+            pk=1,
+            provedor=ConfiguracaoIA.PROVEDOR_FALSO,
+            limite_mensal_usuario=100000,
+            limite_mensal_sistema=0,
+            reserva_minima_tokens=0,
+        )
+        self.provedor = ProvedorFalso(self.config)
+        self.provedor.programar(
+            texto="conexão funcionando.",
+            uso=UsoTokens(entrada=8, saida=3),
+        )
+
+    def test_exemplo_de_chamada_ia_com_usuario_autenticado(self):
+        def montar_pedido(config):
+            return PedidoIA(
+                instrucoes="Responda somente em português.",
+                texto="Diga apenas: conexão funcionando.",
+            )
+
+        with patch("ia.chamada.obter_provedor", return_value=self.provedor):
+            resposta = chamar_ia(
+                finalidade="app_teste",
+                montar_pedido=montar_pedido,
+                usuario=self.usuario,
+                origem="comando",
+                versao_prompt="v1",
+            )
+
+        self.assertEqual(resposta.texto, "conexão funcionando.")
+        self.assertEqual(len(self.provedor.pedidos), 1)
+        self.assertEqual(
+            self.provedor.pedidos[0].instrucoes,
+            "Responda somente em português.",
+        )
+        self.assertEqual(
+            self.provedor.pedidos[0].texto,
+            "Diga apenas: conexão funcionando.",
+        )
+        auditoria = RequisicaoIA.objects.get()
+        self.assertEqual(auditoria.usuario, self.usuario)
+        self.assertEqual(auditoria.finalidade, "app_teste")
+        self.assertEqual(auditoria.origem, "comando")
+        self.assertEqual(auditoria.versao_prompt, "v1")
+        self.assertEqual(auditoria.situacao, "sucesso")

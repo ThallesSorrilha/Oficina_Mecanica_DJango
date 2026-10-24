@@ -38,6 +38,12 @@
           <li class="nav-item">
             <a class="nav-link" href="{% url "contato" %}"><i class="bi bi-envelope me-1"></i>Contato</a>
           </li>
+          {% if user.is_authenticated %}
+          <li class="nav-item"><a class="nav-link" href="{% url 'ia:consumo' %}"><i class="bi bi-bar-chart me-1"></i>Meu consumo de IA</a></li>
+          {% if user.is_superuser %}
+          <li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Administração de IA</a><ul class="dropdown-menu"><li><a class="dropdown-item" href="{% url 'ia:requisicoes' %}">Requisições de IA</a></li><li><a class="dropdown-item" href="{% url 'ia:configuracao' %}">Configuração da IA</a></li><li><a class="dropdown-item" href="{% url 'ia:usuarios' %}">IA por usuário</a></li></ul></li>
+          {% endif %}
+          {% endif %}
         </ul>
 
         <div class="d-flex flex-column flex-lg-row gap-2 mt-3 mt-lg-0">
@@ -50,6 +56,13 @@
   </nav>
 
   <main class="site-main">
+    {% if messages %}
+    <div class="container pt-4">
+      {% for message in messages %}
+      <div class="alert alert-{{ message.tags|default:'info' }}">{{ message }}</div>
+      {% endfor %}
+    </div>
+    {% endif %}
     {% block hero %}
     <section class="hero py-5">
       <div class="hero-grid-lines"></div>

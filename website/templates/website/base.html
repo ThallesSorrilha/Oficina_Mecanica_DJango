@@ -41,6 +41,20 @@
               <a class="nav-link" href="{% url 'sobre' %}">Sobre</a>
             </li>
             {% if user.is_authenticated %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'ia:consumo' %}">Meu consumo de IA</a>
+            </li>
+            {% if user.is_superuser %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'ia:requisicoes' %}">Requisições de IA</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'ia:configuracao' %}">Configuração da IA</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'ia:usuarios' %}">IA por usuário</a>
+            </li>
+            {% endif %}
             <li class="nav-item dropdown">
               <a
                 class="nav-link dropdown-toggle"
@@ -82,6 +96,13 @@
 
     <!-- Main Content -->
     <main class="py-4">
+      {% if messages %}
+      <div class="container">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags|default:'info' }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+      {% endif %}
       <div class="container">{% block content %}{% endblock %}</div>
     </main>
 

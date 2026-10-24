@@ -1,0 +1,5 @@
+{% extends "website/modelo.html" %}
+{% block hero %}{% endblock hero %}
+{% block conteudo %}
+<section class="py-5 bg-surface"><div class="container"><h1 class="h3 mb-4">IA por usuário</h1><div class="table-responsive card shadow-sm"><table class="table table-hover mb-0"><thead><tr><th>Usuário</th><th>Limite efetivo</th><th>Uso do mês</th><th>IA ligada</th><th></th></tr></thead><tbody>{% for item in usuarios_ia %}<tr><td>{{ item.usuario.username }}</td><td>{% if item.tem_limite_proprio %}próprio: {{ item.limite }}{% else %}padrão: {{ item.limite }}{% endif %}</td><td>{{ item.uso }}</td><td>{% if item.ligada %}<span class="badge bg-success">Sim</span>{% else %}<span class="badge bg-danger">Não</span>{% endif %}</td><td><a class="btn btn-sm btn-outline-primary" href="{% url 'ia:usuario-editar' item.usuario.pk %}">Editar</a><form class="d-inline" method="post" action="{% url 'ia:usuario-padrao' item.usuario.pk %}">{% csrf_token %}<button class="btn btn-sm btn-outline-secondary">Voltar ao padrão</button></form></td></tr>{% endfor %}</tbody></table></div>{% include "ia/paginacao.html" %}</div></section>
+{% endblock conteudo %}

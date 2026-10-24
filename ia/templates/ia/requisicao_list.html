@@ -1,0 +1,40 @@
+{% extends "website/modelo.html" %}
+{% block hero %}{% endblock hero %}
+{% block conteudo %}
+<section class="py-5 bg-surface">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h1 class="h3 mb-0">Requisições de IA</h1>
+      <span class="badge bg-primary-subtle text-primary">Mês atual</span>
+    </div>
+    <div class="row g-3 mb-4">
+      <div class="col-md-3"><div class="card shadow-sm"><div class="card-body"><small>Tokens</small><div class="h4">{{ resumo_mes.tokens|default:0 }}</div></div></div></div>
+      <div class="col-md-3"><div class="card shadow-sm"><div class="card-body"><small>Custo (US$)</small><div class="h4">{{ resumo_mes.custo|default:"0" }}</div></div></div></div>
+      <div class="col-md-3"><div class="card shadow-sm"><div class="card-body"><small>Erros</small><div class="h4">{{ resumo_mes.erros|default:0 }}</div></div></div></div>
+      <div class="col-md-3"><div class="card shadow-sm"><div class="card-body"><small>Requisições</small><div class="h4">{{ resumo_mes.quantidade|default:0 }}</div></div></div></div>
+    </div>
+    <form class="card card-body shadow-sm mb-4" method="get">
+      <div class="row g-2">
+        <div class="col-md-2"><label class="form-label">Usuário</label><input class="form-control" name="usuario" value="{{ filtros.usuario }}"></div>
+        <div class="col-md-2"><label class="form-label">Situação</label><select class="form-select" name="situacao"><option value="">Todas</option>{% for value,label in situacoes %}<option value="{{ value }}" {% if filtros.situacao == value %}selected{% endif %}>{{ label }}</option>{% endfor %}</select></div>
+        <div class="col-md-2"><label class="form-label">Finalidade</label><input class="form-control" name="finalidade" value="{{ filtros.finalidade }}"></div>
+        <div class="col-md-2"><label class="form-label">Origem</label><select class="form-select" name="origem"><option value="">Todas</option>{% for value,label in origens %}<option value="{{ value }}" {% if filtros.origem == value %}selected{% endif %}>{{ label }}</option>{% endfor %}</select></div>
+        <div class="col-md-2"><label class="form-label">De</label><input class="form-control" type="date" name="de" value="{{ filtros.de }}"></div>
+        <div class="col-md-2"><label class="form-label">Até</label><input class="form-control" type="date" name="ate" value="{{ filtros.ate }}"></div>
+      </div>
+      <button class="btn btn-primary mt-3">Filtrar</button>
+    </form>
+    <div class="row g-3 mb-4">
+      <div class="col-md-6"><div class="card shadow-sm"><div class="card-body"><h2 class="h6">5 referências que mais gastaram</h2><ol class="mb-0">{% for referencia,total in top_referencias %}<li>{{ referencia }} ({{ total }})</li>{% empty %}<li class="text-muted">Sem dados.</li>{% endfor %}</ol></div></div></div>
+      <div class="col-md-6"><div class="card shadow-sm"><div class="card-body"><h2 class="h6">5 usuários que mais gastaram</h2><ol class="mb-0">{% for item in top_usuarios %}<li>{{ item.usuario__username }} ({{ item.tokens }})</li>{% empty %}<li class="text-muted">Sem dados.</li>{% endfor %}</ol></div></div></div>
+    </div>
+    <div class="table-responsive card shadow-sm">
+      <table class="table table-hover align-middle mb-0">
+        <thead><tr><th>Data/hora</th><th>Usuário</th><th>Finalidade</th><th>Referência</th><th>Situação</th><th>Tokens</th><th>Custo</th><th>Duração</th><th></th></tr></thead>
+        <tbody>{% for item in requisicoes %}<tr><td>{{ item.criado_em|date:"d/m/Y H:i" }}</td><td>{{ item.usuario }}</td><td>{{ item.finalidade }}</td><td>{% if item.referencia %}{{ item.referencia }}{% else %}—{% endif %}</td><td><span class="badge {% if item.situacao == 'sucesso' %}bg-success{% else %}bg-danger{% endif %}">{{ item.get_situacao_display }}</span></td><td>{{ item.tokens_total }}</td><td>US$ {{ item.custo_estimado }}</td><td>{{ item.duracao_ms }} ms</td><td><a href="{% url 'ia:requisicao-detalhe' item.pk %}" class="btn btn-sm btn-outline-primary">Detalhes</a></td></tr>{% empty %}<tr><td colspan="9" class="text-center py-4">Nenhuma requisição encontrada.</td></tr>{% endfor %}</tbody>
+      </table>
+    </div>
+    {% include "ia/paginacao.html" %}
+  </div>
+</section>
+{% endblock conteudo %}

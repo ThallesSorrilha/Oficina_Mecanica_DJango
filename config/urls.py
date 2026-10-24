@@ -23,5 +23,6 @@ urlpatterns = [
     # Importar urls dos apps
     path("", include("website.urls")),
     path("mecanica/", include("mecanica.urls")),
+    path("ia/", include("ia.urls")),
 
 ]
