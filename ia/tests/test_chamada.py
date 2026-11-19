@@ -1,11 +1,15 @@
 from datetime import date
+from io import BytesIO
 from unittest.mock import patch
 
 from django.contrib.auth import get_user_model
 from django.core.cache import cache
 from django.test import TestCase
+from PIL import Image
+from pypdf import PdfWriter
 
-from ia.chamada import chamar_ia
+from ia.arquivos import ArquivoInvalido, hash_arquivo, preparar_arquivo
+from ia.chamada import chamar_ia, testar_conexao
 from ia.cota import CotaExcedida, mes_atual, situacao_da_cota
 from ia.models import ConfiguracaoIA, ConfiguracaoIAUsuario, ConsumoIA, RequisicaoIA
 from ia.provedores.base import ErroConfiguracao, ErroTemporario, PedidoIA, UsoTokens
@@ -159,6 +163,85 @@ class ChamadaTests(TestCase):
         self.assertEqual(
             ConsumoIA.objects.get(dono=self.usuario, mes=mes_atual()).tokens_total,
             1,
+        )
+
+
+class ArquivosTests(TestCase):
+    def setUp(self):
+        cache.clear()
+        ConfiguracaoIA.objects.create(pk=1, tamanho_maximo_mb=1, pdf_max_paginas=1)
+
+    def test_arquivo_acima_do_tamanho_maximo_e_recusado(self):
+        with self.assertRaisesMessage(ArquivoInvalido, "tamanho máximo"):
+            preparar_arquivo(b"x" * (1024 * 1024 + 1), "image/png")
+
+    def test_tipo_nao_permitido_e_recusado(self):
+        with self.assertRaisesMessage(ArquivoInvalido, "Tipo de arquivo não permitido"):
+            preparar_arquivo(b"texto", "text/plain")
+
+    def test_imagem_vira_jpeg_rgb_reduzida(self):
+        buffer = BytesIO()
+        Image.new("RGBA", (4000, 2000), (255, 0, 0, 128)).save(buffer, format="PNG")
+
+        conteudo, mime = preparar_arquivo(buffer.getvalue(), "image/png", lado_maximo=500)
+
+        self.assertEqual(mime, "image/jpeg")
+        with Image.open(BytesIO(conteudo)) as imagem:
+            self.assertEqual(imagem.mode, "RGB")
+            self.assertLessEqual(max(imagem.size), 500)
+
+    def test_pdf_acima_do_limite_de_paginas_e_recusado(self):
+        writer = PdfWriter()
+        writer.add_blank_page(width=200, height=200)
+        writer.add_blank_page(width=200, height=200)
+        buffer = BytesIO()
+        writer.write(buffer)
+
+        with self.assertRaisesMessage(ArquivoInvalido, "número máximo de páginas"):
+            preparar_arquivo(buffer.getvalue(), "application/pdf")
+
+    def test_hash_arquivo_e_sha256_hexadecimal(self):
+        self.assertEqual(
+            hash_arquivo(b"abc"),
+            "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad",
+        )
+
+
+class TestarConexaoTests(TestCase):
+    def setUp(self):
+        cache.clear()
+        self.usuario = get_user_model().objects.create_user("conexao")
+        self.config = ConfiguracaoIA.objects.create(
+            pk=1,
+            provedor=ConfiguracaoIA.PROVEDOR_FALSO,
+            limite_mensal_sistema=0,
+            reserva_minima_tokens=0,
+        )
+
+    def test_testar_conexao_informa_modo_api_key(self):
+        provedor = ProvedorFalso(self.config)
+        with patch("ia.chamada.obter_provedor", return_value=provedor):
+            _, mensagem = testar_conexao(self.usuario)
+
+        self.assertEqual(mensagem, "Conexão realizada usando API Key.")
+        self.assertEqual(provedor.pedidos[0].esquema.__name__, "RespostaTeste")
+        self.assertEqual(
+            RequisicaoIA.objects.get().finalidade,
+            "teste_conexao",
+        )
+
+    def test_testar_conexao_informa_projeto_e_regiao_no_enterprise(self):
+        self.config.modo_acesso = ConfiguracaoIA.MODO_ENTERPRISE
+        self.config.projeto_gcp = "projeto-x"
+        self.config.regiao = "us-central1"
+        self.config.save()
+        provedor = ProvedorFalso(self.config)
+        with patch("ia.chamada.obter_provedor", return_value=provedor):
+            _, mensagem = testar_conexao(self.usuario)
+
+        self.assertEqual(
+            mensagem,
+            "Conexão realizada usando Enterprise (projeto-x, região us-central1).",
         )
 
 
