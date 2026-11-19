@@ -4,46 +4,52 @@ O projeto é uma aplicação Django para gestão de uma oficina mecânica.
 
 - `website`: páginas institucionais (`index`, contato e sobre) e autenticação de usuários (cadastro, login, logout e mudança de senha).
 - `mecanica`: cadastro, consulta, alteração e exclusão de clientes, carros, serviços, peças, mecânicos, consultores técnicos, ordens de serviço e itens de peças/serviços.
-- `ia`: porta de entrada de provedores de IA, configuração global e configuração por usuário; o app já existe no estado atual do projeto.
+- `ia`: porta de entrada de provedores de IA (`chamar_ia`), configuração global única (`ConfiguracaoIA`), configuração por usuário (`ConfiguracaoIAUsuario`), auditoria (`RequisicaoIA`), consumo mensal (`ConsumoIA`), cota, preparo de arquivos e telas em `/ia/`.
 - Django: `5.2.11`, conforme `requirements.txt`.
 - Model de usuário: `django.contrib.auth.models.User`; não há `AUTH_USER_MODEL` configurado em `config/settings.py`.
 - `TIME_ZONE`: `America/Sao_Paulo`, em `config/settings.py`.
-- Variável ligada ao Google encontrada: `GEMINI_API_KEY`, no `.env` e lida em `ia/provedores/__init__.py`.
+- Variável ligada ao Google: o arquivo `.env` contém o nome `GEMINI_API_KEY`, mas o código não a lê mais. A chave do modo `api_key` fica em `ConfiguracaoIA.api_key`, preenchida pela tela `/ia/configuracao/` ou pelo Admin. O `.env` é ignorado pelo Git (`.gitignore:2`).
 - Publicação no Google Cloud: existe `app.yaml`, configurado para Google App Engine com runtime Python 3.12 e Gunicorn. Não foi identificada configuração de Cloud Run. O ID do projeto Google Cloud não aparece no repositório.
-- Template base: `website/templates/website/base.html`. Blocos existentes: `title`, `extra_css`, `content` e `extra_js`.
-- Framework de CSS: Bootstrap 5.3.3 via CDN, com a folha estática adicional `static/css/estilo.css`.
+- Templates base: `website/templates/website/base.html` (blocos `title`, `extra_css`, `content`, `extra_js`) e `website/templates/website/modelo.html` (blocos `hero`, `conteudo`), usado pelas telas de `mecanica` e `ia`.
+- Framework de CSS: Bootstrap 5.3.3 via CDN, com `static/css/estilo.css`; formulários com django-crispy-forms no padrão `bootstrap5`.
 - Chaves primárias: inteiros (`BigAutoField` por padrão); não há uso de UUID como chave primária.
 - Entidade dona dos dados: não existe entidade de empresa, conta, loja, clínica ou turma. Os dados operacionais pertencem ao domínio da oficina e se relacionam principalmente por `Cliente`, `Carro` e `OrdemServico`. O usuário autenticado não possui relacionamento com esses dados operacionais; no app `ia`, `ConfiguracaoIAUsuario` se liga individualmente ao usuário.
 
 ## 2. O que já existe de IA
 
-- Versão do `google-genai`: dependência declarada em `requirements.txt` sem versão fixada.
-- Models de configuração de IA:
-  - `ia.models.ConfiguracaoIA`: configuração global única do provedor, modelo, temperatura, tokens, raciocínio, tentativas, timeout, cotas, limites de arquivos/PDF, retenção e preços.
-  - `ia.models.ConfiguracaoIAUsuario`: configuração opcional por usuário, com habilitação, limite mensal e observação.
-- Chamada a modelo de IA:
-  - `ia/provedores/gemini.py:89`: `self.cliente.models.generate_content`, usada pelo provedor Gemini para gerar texto e, quando solicitado, dados estruturados validados por um schema Pydantic.
-- A criação do cliente Gemini ocorre em `ia/provedores/gemini.py:46`.
-- Não foram encontradas chamadas a `openai`, `anthropic`, `google.generativeai` ou outras chamadas de modelo fora do app `ia`.
+- Versão do `google-genai`: dependência declarada em `requirements.txt:13`, sem versão fixada. Também constam `Pillow` (`requirements.txt:15`) e `pypdf` (`requirements.txt:16`).
+- Models de configuração e consumo de IA:
+  - `ia/models.py:7` (`ConfiguracaoIA`): configuração global única com provedor, modo de acesso, chave, projeto, região, modelo, tokens, raciocínio, tentativas, timeout, cotas, limites e preços.
+  - `ia/models.py` (`ConfiguracaoIAUsuario`): habilitação, limite mensal próprio e observação por usuário.
+  - `ia/models.py` (`RequisicaoIA`): auditoria de cada tentativa, sem prompt completo nem arquivos.
+  - `ia/models.py` (`ConsumoIA`): consumo mensal por dono da cota.
+- Chamadas a modelo de IA:
+  - `ia/provedores/gemini.py:57` e `ia/provedores/gemini.py:63`: criação do cliente `genai.Client`, no modo `api_key` ou Enterprise/Vertex AI.
+  - `ia/provedores/gemini.py:108`: `self.cliente.models.generate_content`, que gera texto e, quando há esquema, dados estruturados validados por Pydantic.
+  - `ia/chamada.py:113`: `provedor.gerar(pedido)`, chamado por `chamar_ia` (`ia/chamada.py:67`).
+  - `ia/chamada.py:183`: `testar_conexao` chama `chamar_ia` com esquema mínimo para validar a configuração (definida em `ia/chamada.py:172`).
+- Não há chamadas de IA fora do app `ia`. Não foram encontradas referências a `openai`, `anthropic` ou `google.generativeai`.
 
 ## 3. Propostas
 
-- Dono da cota: o usuário autenticado. O projeto não possui uma entidade organizacional ligada aos usuários; `ConfiguracaoIAUsuario` já oferece o vínculo individual. `ConfiguracaoIA` pode definir o limite padrão, e a configuração por usuário pode sobrescrevê-lo ou desabilitar a IA.
-- Chamada existente em `ia/provedores/gemini.py:89`: finalidade sugerida `app_ia_geracao` e referência neutra recebida pelo chamador, preferencialmente um tipo e identificador opcionais. Isso mantém a chamada genérica e permite agrupar a auditoria sem acoplá-la a uma tela ou entidade.
-- Chatbot futuro: finalidade sugerida `app_chatbot` e referência neutra de conversa/sessão. Isso permite distinguir o chatbot de chamadas internas e manter a mesma porta de entrada, cota e auditoria.
-- Chamadas futuras vinculadas a uma ordem de serviço: finalidade sugerida `app_ordem_servico` e referência composta pelo tipo e identificador da ordem. Isso permite agrupamento sem criar relacionamentos específicos para cada uso de IA.
+- Dono da cota: o usuário autenticado (`ConsumoIA.dono`), conforme a decisão registrada. `ConfiguracaoIA.limite_mensal_usuario` define o padrão, e `ConfiguracaoIAUsuario.limite_mensal` pode sobrescrevê-lo ou desabilitar a IA.
+- Chamada de geração (`ia/provedores/gemini.py:108`, chamada por `ia/chamada.py:113`): finalidade sugerida `app_ia_geracao`; referência `(tipo, id)` opcional, informada pelo chamador. O motivo é manter a chamada genérica e agrupável.
+- Teste de conexão (`ia/chamada.py:183`): finalidade `teste_conexao`, sem referência. Deve continuar separada de uso de negócio para não poluir o consumo operacional.
+- Chatbot futuro: finalidade sugerida `app_chatbot`; referência `(tipo, id)` apontando para a conversa/sessão, quando existir um model dela. Isso separa o chatbot das chamadas internas, mantendo a mesma porta, cota e auditoria.
+- Chamadas ligadas a uma ordem de serviço no futuro: finalidade sugerida `app_ordem_servico`; referência `(OrdemServico, id)`. O agrupamento usa o `ContentType` já previsto em `RequisicaoIA.referencia_tipo`, sem campos específicos por uso.
 
 ## 4. Riscos
 
-- `GEMINI_API_KEY` está configurada no `.env`; o arquivo não deve ser versionado nem exposto. A chave não deve aparecer no código, em arquivo JSON ou no Git.
-- `config/settings.py` contém um `SECRET_KEY` Django literal; isso é um risco independente para qualquer exposição do repositório.
-- Dados pessoais de `Cliente`, `Carro` e `OrdemServico`, como CPF, telefone, placa, VIN e observações, podem ser enviados à IA se o chamador os incluir.
-- Textos livres de ordens de serviço podem conter instruções não confiáveis, criando risco de prompt injection e de vazamento de dados.
-- Registrar prompts, respostas, arquivos ou conteúdo bruto na auditoria pode aumentar a exposição de dados pessoais e segredos; retenção e mascaramento precisam ser definidos.
-- Ainda não há registro efetivo de cada chamada, controle de cota mensal ou proteção contra concorrência; chamadas simultâneas podem ultrapassar limites.
-- Modelo, preços, limites e cotas editáveis precisam de autorização administrativa e validação para evitar configurações incompatíveis com orçamento ou capacidade do provedor.
-- O `app.yaml` não informa o ID do projeto Google Cloud; uma configuração de ambiente incorreta pode direcionar custos para a conta errada.
-- O provedor atual depende diretamente do SDK Gemini; a porta neutra deve continuar isolando erros, tokens, motivos de finalização e futuros provedores.
+- Chave em arquivo local: `GEMINI_API_KEY` continua no `.env`. O arquivo é ignorado pelo Git (`.gitignore:2`), mas o segredo fica em texto puro; qualquer cópia, print ou compartilhamento o expõe. Sugestão: remover a variável do `.env` depois de confirmar a chave do banco.
+- Chave no banco: `ConfiguracaoIA.api_key` é texto simples no PostgreSQL. Quem tiver acesso ao banco, a backups ou ao superusuário pode lê-la. O campo é exibido com `render_value=True` no Admin e em `/ia/configuracao/`.
+- Segredo versionado: `config/settings.py:30` contém um `SECRET_KEY` literal e `config/settings.py:33` mantém `DEBUG = True`. Isso é um risco independente de exposição do repositório.
+- Dados pessoais: `Cliente`, `Carro` e `OrdemServico` têm CPF, telefone, placa e observações. Se o chamador incluir esses dados em `PedidoIA.texto`, eles vão ao provedor externo. O `contexto_hash` identifica o conteúdo, mas não o protege.
+- Prompt injection: textos livres de `OrdemServico` podem conter instruções que alteram a resposta da IA.
+- Auditoria: `RequisicaoIA.resposta` guarda até 20.000 caracteres da resposta, e `RequisicaoIA.erro` guarda mensagens de erro. Podem conter dados pessoais devolvidos pelo modelo. `reter_requisicoes_dias` existe, mas nenhum processo o aplica.
+- Limite sem bloqueio atômico: a cota é verificada antes da chamada e o consumo é gravado depois. Chamadas simultâneas do mesmo usuário podem ultrapassar o limite.
+- Teto e preços: `limite_mensal_sistema`, `preco_entrada_milhao` e `preco_saida_milhao` são editáveis pelo superusuário; valores incorretos distorcem o controle de custo.
+- Autorização: as telas `/ia/` usam `is_superuser`; não há grupo específico nem registro de quem alterou a configuração.
+- Publicação: `app.yaml` não informa projeto Google Cloud. `ConfiguracaoIA.projeto_gcp` só é usado no modo Enterprise; projeto ou credencial errados podem gerar custo em outra conta.
 
 ## 5. Perguntas
 
@@ -51,27 +57,23 @@ O projeto é uma aplicação Django para gestão de uma oficina mecânica.
    (a) API Key do Google AI Studio, ou
    (b) Enterprise / Vertex AI, cobrado na conta de faturamento do Google Cloud (ex.: crédito educacional). Se for (b), qual o ID do projeto no Google Cloud?
 
-   Sugestão: começar com (a), porque `GEMINI_API_KEY` já existe no `.env` e o código atual já cria o cliente com uma chave; manter o modo Enterprise preparado para a troca posterior.
+   Sugestão: começar com (a), porque é a decisão já registrada em "## 6. Decisões" e o código lê a chave de `ConfiguracaoIA.api_key`.
 
-2. A cota mensal deve pertencer ao usuário autenticado, sem uma entidade de oficina/empresa compartilhada?
+2. A cota mensal deve continuar pertencendo ao usuário autenticado, sem uma entidade de oficina/empresa compartilhada?
 
-   Sugestão: sim, usar o usuário como dono da cota e manter `ConfiguracaoIAUsuario` como override do limite padrão.
+   Sugestão: sim, manter o usuário como dono da cota, como já implementado em `ia/cota.py`.
 
-3. A auditoria deve guardar o texto completo de entrada e saída, ou apenas metadados, tokens, duração, situação e referência?
+3. A auditoria deve continuar guardando até 20.000 caracteres da resposta, ou somente metadados, tokens, duração, situação, motivo de fim e referência?
 
-   Sugestão: guardar somente metadados, tokens, duração, situação e referência, sem texto completo nem arquivos por padrão.
+   Sugestão: remover o texto da resposta da auditoria e manter somente os metadados.
 
-4. A referência neutra deve ser um texto livre informado pelo chamador ou um par fixo de tipo e identificador?
+4. Qual deve ser o prazo de retenção de `RequisicaoIA` (`reter_requisicoes_dias`), e quem executa a limpeza?
 
-   Sugestão: usar tipo e identificador opcionais, para manter consultas e agrupamentos consistentes sem acoplar a auditoria a um único model.
+   Sugestão: 60 dias, com um comando de limpeza executado manualmente pelo superusuário, sem exigir agendador externo.
 
-5. O chatbot futuro deverá compartilhar a mesma cota mensal e a mesma auditoria das chamadas internas?
+5. A chave da API deve permanecer em texto no banco (`ConfiguracaoIA.api_key`), ou deve ser lida somente do `.env`?
 
-   Sugestão: sim, compartilhar a porta única, a cota do usuário e o registro de chamadas, diferenciando a finalidade como `app_chatbot`.
-
-6. O texto bruto de prompts e respostas deve ter prazo de retenção configurável ou deve ser descartado após a chamada?
-
-   Sugestão: não armazenar texto bruto nem arquivos por padrão; permitir retenção explícita somente quando houver necessidade operacional e regra definida.
+   Sugestão: manter em `ConfiguracaoIA.api_key`, que é o contrato atual, e remover `GEMINI_API_KEY` do `.env` depois de confirmar que a chave do banco funciona.
 
 ## 6. Decisões
 
