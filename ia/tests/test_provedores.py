@@ -5,7 +5,13 @@ from django.test import TestCase
 
 from ia.models import ConfiguracaoIA
 from ia.provedores import obter_provedor
-from ia.provedores.base import ErroConfiguracao, ErroPermanente, PedidoIA
+from ia.provedores.base import (
+    ErroConfiguracao,
+    ErroIA,
+    ErroPermanente,
+    PedidoIA,
+    UsoTokens,
+)
 from ia.provedores.falso import ProvedorFalso
 
 
@@ -113,3 +119,66 @@ class ProvedoresTests(TestCase):
         )
 
         self.assertNotIn("chave-secreta", str(configuracao))
+        self.assertNotIn("chave-secreta", repr(configuracao))
+
+    def test_full_clean_enterprise_sem_projeto_acusa_campo(self):
+        configuracao = ConfiguracaoIA(
+            modo_acesso=ConfiguracaoIA.MODO_ENTERPRISE,
+            projeto_gcp="",
+        )
+
+        with self.assertRaises(ValidationError) as contexto:
+            configuracao.full_clean()
+
+        self.assertIn("projeto_gcp", contexto.exception.message_dict)
+        self.assertIn(
+            "Preencha o ID do projeto no Google Cloud na tela Configuração da IA.",
+            contexto.exception.message_dict["projeto_gcp"],
+        )
+
+    @patch("ia.provedores.gemini.genai.Client")
+    def test_api_key_cria_cliente_com_chave_salva(self, cliente):
+        configuracao = ConfiguracaoIA.objects.create(pk=1, api_key="chave-salva")
+
+        obter_provedor(configuracao)
+
+        argumentos = cliente.call_args.kwargs
+        self.assertEqual(argumentos["api_key"], "chave-salva")
+        self.assertNotIn("enterprise", argumentos)
+        self.assertEqual(argumentos["http_options"].timeout, configuracao.timeout_s * 1000)
+
+    @patch("ia.provedores.gemini.genai.Client")
+    def test_enterprise_usa_vertexai_quando_biblioteca_nao_aceita_enterprise(self, cliente):
+        def cliente_antigo(**kwargs):
+            if "enterprise" in kwargs:
+                raise TypeError("enterprise não suportado")
+            return object()
+
+        cliente.side_effect = cliente_antigo
+        configuracao = ConfiguracaoIA.objects.create(
+            pk=1,
+            modo_acesso=ConfiguracaoIA.MODO_ENTERPRISE,
+            projeto_gcp="projeto-teste",
+        )
+
+        obter_provedor(configuracao)
+
+        argumentos = cliente.call_args.kwargs
+        self.assertTrue(argumentos["vertexai"])
+        self.assertNotIn("enterprise", argumentos)
+        self.assertEqual(argumentos["project"], "projeto-teste")
+
+    def test_erro_ia_guarda_uso_texto_e_modelo(self):
+        uso = UsoTokens(entrada=1, saida=2)
+        erro = ErroIA("falha", uso=uso, texto_bruto="bruto", modelo="modelo-x")
+
+        self.assertEqual(str(erro), "falha")
+        self.assertEqual(erro.uso, uso)
+        self.assertEqual(erro.texto_bruto, "bruto")
+        self.assertEqual(erro.modelo, "modelo-x")
+        self.assertEqual(ErroIA.situacao, "erro_ia")
+
+    def test_uso_tokens_total_soma_entrada_e_saida_sem_duplicar_raciocinio(self):
+        uso = UsoTokens(entrada=3, saida=4, raciocinio=1)
+
+        self.assertEqual(uso.total, 7)
